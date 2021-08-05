@@ -21,28 +21,34 @@ public class LoginScreen extends Screen {
 
         System.out.println("\nLogin to your account!\n");
 
-        System.out.print("Username: ");
-        String username = consoleReader.readLine();
+            System.out.print("Username: ");
+            String username = consoleReader.readLine();
+            if (username.equals("b")) {
+                router.navigateBack();
+                return;
+            }
 
-        if(username.equals("b")){
-            router.getPreviousScreen().render() ;
-        }
+            System.out.print("Password: ");
+            String password = consoleReader.readLine();
+            if (password.equals("b")) {
+                router.navigateBack();
+                return;
+            }
 
-        System.out.print("Password: ");
-        String password = consoleReader.readLine();
 
+            try {
+                AppUser authUser = userService.login(username, password);
+                System.out.println("Login successful!");
+                router.navigate("/dashboard");
+            } catch (AuthenticationException ae) {
+                System.out.println("No user found with provided credentials!");
+                System.out.println("Navigating back to welcome screen...");
+                router.navigate("/welcome");
+            }
 
-        try {
-            AppUser authUser = userService.login(username, password);
-            System.out.println("Login successful!");
-            router.navigate("/dashboard");
-        } catch (AuthenticationException ae) {
-            System.out.println("No user found with provided credentials!");
-            System.out.println("Navigating back to welcome screen...");
-            router.navigate("/welcome");
-        }
 
 
     }
+
 
 }

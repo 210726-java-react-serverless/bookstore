@@ -30,9 +30,9 @@ public class ScreenRouter {
                                .orElseThrow(ScreenNotFoundException::new);
     }
 
-    //public void navigateBack(String PreviousScreen){
-      //  previousScreen = screens.
-    //}
+    public void navigateBack(){
+        currentScreen = previousScreen;
+    }
 
     public Screen getCurrentScreen() {
         return currentScreen;

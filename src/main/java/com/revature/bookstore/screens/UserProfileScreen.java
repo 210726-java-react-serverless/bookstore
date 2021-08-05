@@ -22,4 +22,5 @@ public class UserProfileScreen extends Screen {
         router.navigate("/dashboard");
     }
 
+
 }

@@ -23,33 +23,51 @@ public class RegisterScreen extends Screen {
 
         System.out.println("\nRegister for a new account!");
 
-        System.out.print("First name: ");
-        String firstName = consoleReader.readLine();
+            System.out.print("First name: ");
+            String firstName = consoleReader.readLine();
+            if (firstName.equals("b")) {
+                router.navigate(router.getPreviousScreen().route);
+                return;
+            }
 
-        System.out.print("Last name: ");
-        String lastName = consoleReader.readLine();
+            System.out.print("Last name: ");
+            String lastName = consoleReader.readLine();
+            if (lastName.equals("b")) {
+                router.navigateBack();
+                return;
+            }
+            System.out.print("Email: ");
+            String email = consoleReader.readLine();
+            if (email.equals("b")) {
+                router.navigate(router.getPreviousScreen().route);
+            }
 
-        System.out.print("Email: ");
-        String email = consoleReader.readLine();
+            System.out.print("Username: ");
+            String username = consoleReader.readLine();
+            if (username.equals("b")) {
+                router.navigate(router.getPreviousScreen().route);
+            }
 
-        System.out.print("Username: ");
-        String username = consoleReader.readLine();
+            System.out.print("Password: ");
+            String password = consoleReader.readLine();
+            if (password.equals("b")) {
+                router.navigate(router.getPreviousScreen().route);
+            }
 
-        System.out.print("Password: ");
-        String password = consoleReader.readLine();
+            AppUser newUser = new AppUser(firstName, lastName, email, username, password);
 
-        AppUser newUser = new AppUser(firstName, lastName, email, username, password);
+            try {
+                userService.register(newUser);
+                logger.info("User successfully registered!");
+                router.navigate("/dashboard");
+            } catch (Exception e) {
+                logger.error(e.getMessage());
+                logger.debug("User not registered!");
+                router.navigate("/welcome");
+            }
 
-        try {
-            userService.register(newUser);
-            logger.info("User successfully registered!");
-            router.navigate("/dashboard");
-        } catch (Exception e) {
-            logger.error(e.getMessage());
-            logger.debug("User not registered!");
-            router.navigate("/welcome");
-        }
 
     }
+
 
 }

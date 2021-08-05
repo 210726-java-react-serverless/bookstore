@@ -17,9 +17,18 @@ public class DashboardScreen  extends Screen {
      */
     @Override
     public void render() throws Exception {
-        System.out.println("DashboardScreen works!");
-        System.out.println("Screen under construction, sending you back to the Welcome Screen.");
-        router.navigate("/welcome");
+        System.out.println("Welcome to the Dashboard");
+
+        String menu = "\nWelcome to RevaBooks!\n" +
+                "1) User Profile\n" +
+                "2) Browse Books\n" +
+                "3) Log out\n" +
+                "> ";
+        System.out.print(menu);
+
+
+
     }
+
 
 }
