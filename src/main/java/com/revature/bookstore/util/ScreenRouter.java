@@ -1,5 +1,6 @@
 package com.revature.bookstore.util;
 
+import com.revature.bookstore.documents.AppUser;
 import com.revature.bookstore.screens.Screen;
 import com.revature.bookstore.util.exceptions.ScreenNotFoundException;
 

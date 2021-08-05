@@ -1,5 +1,6 @@
 package com.revature.bookstore.util;
 
+import com.revature.bookstore.documents.AppUser;
 import com.revature.bookstore.repos.UserRepository;
 import com.revature.bookstore.screens.*;
 import com.revature.bookstore.services.UserService;
@@ -21,11 +22,10 @@ public class AppState {
         UserRepository userRepo = new UserRepository();
         UserService userService = new UserService(userRepo);
 
-
         router.addScreen(new WelcomeScreen(consoleReader, router))
               .addScreen(new LoginScreen(consoleReader, router, userService))
               .addScreen(new RegisterScreen(consoleReader, router, userService))
-              .addScreen(new DashboardScreen(consoleReader, router))
+              .addScreen(new DashboardScreen(consoleReader, router, userService))
               .addScreen(new UserProfileScreen(consoleReader, router));
 
     }
@@ -40,7 +40,5 @@ public class AppState {
                 e.printStackTrace();
             }
         }
-
     }
-
 }

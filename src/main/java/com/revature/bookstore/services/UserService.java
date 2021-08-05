@@ -28,6 +28,8 @@ public class UserService {
 
     }
 
+    private AppUser authUser;
+
     public AppUser login(String username, String password) {
 
         if (username == null || username.trim().equals("") || password == null || password.trim().equals("")) {
@@ -40,8 +42,14 @@ public class UserService {
             throw new AuthenticationException("Invalid credentials provided!");
         }
 
+        this.authUser = authUser;
+
         return authUser; // TODO we need to store this value within app memory to use elsewhere
 
+    }
+
+    public AppUser receiveUser() {
+        return authUser;
     }
 
     public boolean isUserValid(AppUser user) {
