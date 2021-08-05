@@ -21,7 +21,7 @@ public class RegisterScreen extends Screen {
     @Override
     public void render() throws Exception {
 
-        System.out.println("\nUser Registration\n}" +
+        System.out.println("\nUser Registration\n" +
                            "1) Register\n" +
                            "2) Go Back");
         System.out.println("> ");
@@ -32,6 +32,7 @@ public class RegisterScreen extends Screen {
                 break;
             case 2:
                 router.goToPrevious();
+                return;
         }
 
         System.out.println("\nRegister for a new account!");

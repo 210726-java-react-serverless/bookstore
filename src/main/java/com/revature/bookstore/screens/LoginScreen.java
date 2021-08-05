@@ -20,7 +20,7 @@ public class LoginScreen extends Screen {
 
         System.out.println("\nLogin to your account!\n");
 
-        System.out.println("\nUser Registration\n}" +
+        System.out.println("\nUser Registration\n" +
                 "1) Login\n" +
                 "2) Go Back");
         System.out.println("> ");
@@ -31,6 +31,7 @@ public class LoginScreen extends Screen {
                 break;
             case 2:
                 router.goToPrevious();
+                return;
         }
 
         System.out.print("Username: ");

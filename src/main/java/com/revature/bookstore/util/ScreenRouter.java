@@ -28,7 +28,9 @@ public class ScreenRouter {
     }
 
     public void navigate(String route) {
-        history.push(currentScreen);
+        if(currentScreen != null) {
+            history.push(currentScreen);
+        }
         currentScreen = screens.stream()
                                .filter(screen -> screen.getRoute().equals(route))
                                .findFirst()
