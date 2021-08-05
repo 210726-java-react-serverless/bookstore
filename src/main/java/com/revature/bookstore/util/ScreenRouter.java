@@ -29,6 +29,14 @@ public class ScreenRouter {
                                .orElseThrow(ScreenNotFoundException::new);
     }
 
+    public void navigate(String route, String username) {
+        this.username = username;
+        currentScreen = screens.stream()
+                .filter(screen -> screen.getRoute().equals(route))
+                .findFirst()
+                .orElseThrow(ScreenNotFoundException::new);
+    }
+
     public static String getUsername() {
         return username;
     }
