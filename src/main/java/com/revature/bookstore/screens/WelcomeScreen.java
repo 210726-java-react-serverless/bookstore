@@ -1,13 +1,17 @@
 package com.revature.bookstore.screens;
 
+import com.revature.bookstore.util.AppState;
 import com.revature.bookstore.util.ScreenRouter;
 
 import java.io.BufferedReader;
 
 public class WelcomeScreen extends Screen {
 
-    public WelcomeScreen(BufferedReader consoleReader, ScreenRouter router) {
+    private AppState app;
+
+    public WelcomeScreen(BufferedReader consoleReader, ScreenRouter router, AppState app) {
         super("WelcomeScreen", "/welcome", consoleReader, router);
+        this.app = app;
     }
 
     @Override
@@ -33,7 +37,8 @@ public class WelcomeScreen extends Screen {
                 break;
             case "3":
                 System.out.println("Exiting application...");
-                System.exit(0); // TODO this needs to be fixed, the app must shutdown gracefully
+                app.shutdown();
+                break;
             default:
                 System.out.println("You provided an invalid value, please try again.");
 

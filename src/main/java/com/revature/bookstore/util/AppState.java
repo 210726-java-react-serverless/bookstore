@@ -20,9 +20,10 @@ public class AppState {
 
         UserRepository userRepo = new UserRepository();
         UserService userService = new UserService(userRepo);
+        AppState app = this;
 
 
-        router.addScreen(new WelcomeScreen(consoleReader, router))
+        router.addScreen(new WelcomeScreen(consoleReader, router, app))
               .addScreen(new LoginScreen(consoleReader, router, userService))
               .addScreen(new RegisterScreen(consoleReader, router, userService))
               .addScreen(new DashboardScreen(consoleReader, router))
@@ -41,6 +42,12 @@ public class AppState {
             }
         }
 
+    }
+
+    // Switches 'appRunning' to false, ending the while loop and
+    // closing the app through super's main.
+    public void shutdown() {
+        appRunning = false;
     }
 
 }
