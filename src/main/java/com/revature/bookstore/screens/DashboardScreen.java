@@ -15,12 +15,6 @@ public class DashboardScreen  extends Screen {
         this.userService = userService;
     }
 
-
-    /*
-        TODO
-         Implement a dashboard that displays the user's username and gives them the option
-         to navigate to other screens (e.g. UserProfileScreen).
-     */
     @Override
     public void render() throws Exception {
         // Receive a user from the UserService
