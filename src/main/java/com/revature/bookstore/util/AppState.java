@@ -9,7 +9,7 @@ import java.io.InputStreamReader;
 
 public class AppState {
 
-    private boolean appRunning;
+    private static boolean appRunning;
     private final ScreenRouter router;
 
     public AppState() {
@@ -20,10 +20,9 @@ public class AppState {
 
         UserRepository userRepo = new UserRepository();
         UserService userService = new UserService(userRepo);
-        AppState app = this;
 
 
-        router.addScreen(new WelcomeScreen(consoleReader, router, app))
+        router.addScreen(new WelcomeScreen(consoleReader, router))
               .addScreen(new LoginScreen(consoleReader, router, userService))
               .addScreen(new RegisterScreen(consoleReader, router, userService))
               .addScreen(new DashboardScreen(consoleReader, router))
@@ -45,7 +44,7 @@ public class AppState {
 
     // Switches 'appRunning' to false, ending the while loop and
     // closing the app through super's main.
-    public void shutdown() {
+    public static void shutdown() {
         appRunning = false;
     }
 
