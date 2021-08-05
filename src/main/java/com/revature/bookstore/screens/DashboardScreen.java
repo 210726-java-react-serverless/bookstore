@@ -36,13 +36,27 @@ public class DashboardScreen  extends Screen {
     public void render() throws Exception {
 
         String username = ScreenRouter.getUsername();
+        System.out.println("Welcome to the Dashboard Screen, " + username + "!");
 
-        System.out.println("Welcome, " + username + "!");
+        String menu = "\n1) Show/Edit User Profile.\n2) Logout.\n>";
+        System.out.print(menu);
 
+        String userInput = "";
 
-        //#TODO provide routing functionality to other screens
-
-        router.navigate("/welcome");
+        do{
+            userInput = consoleReader.readLine();
+            switch(userInput) {
+                case "1":
+                    router.navigate("/profile");
+                    break;
+                case "2":
+                    router.navigate("/welcome");
+                    break;
+                default:
+                    System.out.println("Your input was invalid. Please try again");
+                    System.out.println(menu);
+            }
+        } while (!(userInput.equals("1") && !(userInput.equals("2"))));
 
     }
 
