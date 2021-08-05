@@ -11,6 +11,7 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.revature.bookstore.documents.AppUser;
 
+import com.revature.bookstore.util.ConnectionFactory;
 import com.revature.bookstore.util.exceptions.ResourcePersistenceException;
 import org.bson.Document;
 
@@ -21,33 +22,46 @@ import java.util.Properties;
 
 public class UserRepository implements CrudRepository<AppUser> {
 
+    static MongoDatabase db = null;
+
+    MongoDatabase getDBConnection() {
+        if (db == null)
+        {
+                db = ConnectionFactory.createConnection();
+        }
+        return db;
+    }
+
     public AppUser findUserByCredentials(String username, String password) {
 
-        Properties appProperties = new Properties();
+//        Properties appProperties = new Properties();
+//
+//        try {
+//            appProperties.load(new FileReader("src/main/resources/application.properties"));
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            throw new ResourcePersistenceException("Unable to load properties file.");
+//        }
+//
+//        String ipAddress = appProperties.getProperty("ipAddress");
+//        int port = Integer.parseInt(appProperties.getProperty("port"));
+//        String dbName = appProperties.getProperty("dbName");
+//        String dbUsername = appProperties.getProperty("username");
+//        String dbPassword = appProperties.getProperty("password");
+//
+//        // TODO obfuscate DB credentials
+//        // TODO abstract connection logic from here
+//        try (MongoClient mongoClient = MongoClients.create(
+//                MongoClientSettings.builder()
+//                                   .applyToClusterSettings(builder -> builder.hosts(Arrays.asList(new ServerAddress(ipAddress, port))))
+//                                   .credential(MongoCredential.createScramSha1Credential(dbUsername, dbName, dbPassword.toCharArray()))
+//                                   .build()
+//        )) {
 
-        try {
-            appProperties.load(new FileReader("src/main/resources/application.properties"));
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new ResourcePersistenceException("Unable to load properties file.");
-        }
+            try {
+//            MongoDatabase bookstoreDatabase = mongoClient.getDatabase("bookstore");
+            MongoDatabase bookstoreDatabase = getDBConnection();
 
-        String ipAddress = appProperties.getProperty("ipAddress");
-        int port = Integer.parseInt(appProperties.getProperty("port"));
-        String dbName = appProperties.getProperty("dbName");
-        String dbUsername = appProperties.getProperty("username");
-        String dbPassword = appProperties.getProperty("password");
-
-        // TODO obfuscate DB credentials
-        // TODO abstract connection logic from here
-        try (MongoClient mongoClient = MongoClients.create(
-                MongoClientSettings.builder()
-                                   .applyToClusterSettings(builder -> builder.hosts(Arrays.asList(new ServerAddress(ipAddress, port))))
-                                   .credential(MongoCredential.createScramSha1Credential(dbUsername, dbName, dbPassword.toCharArray()))
-                                   .build()
-        )) {
-
-            MongoDatabase bookstoreDatabase = mongoClient.getDatabase("bookstore");
             MongoCollection<Document> usersCollection = bookstoreDatabase.getCollection("users");
             Document queryDoc = new Document("username", username).append("password", password);
             Document authUserDoc = usersCollection.find(queryDoc).first();
