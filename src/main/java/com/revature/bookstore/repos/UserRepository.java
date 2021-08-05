@@ -21,6 +21,8 @@ import java.util.Properties;
 
 public class UserRepository implements CrudRepository<AppUser> {
 
+    public String dbUsername;
+
     public AppUser findUserByCredentials(String username, String password) {
 
         Properties appProperties = new Properties();
