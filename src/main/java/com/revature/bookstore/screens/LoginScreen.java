@@ -20,6 +20,19 @@ public class LoginScreen extends Screen {
 
         System.out.println("\nLogin to your account!\n");
 
+        System.out.println("\nUser Registration\n}" +
+                "1) Login\n" +
+                "2) Go Back");
+        System.out.println("> ");
+        int userChoice = Integer.parseInt(consoleReader.readLine());
+
+        switch (userChoice) {
+            case 1:
+                break;
+            case 2:
+                router.goToPrevious();
+        }
+
         System.out.print("Username: ");
         String username = consoleReader.readLine();
 
