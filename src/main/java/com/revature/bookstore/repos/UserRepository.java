@@ -11,7 +11,6 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.revature.bookstore.documents.AppUser;
 
-import com.revature.bookstore.util.exceptions.AuthenticationException;
 import com.revature.bookstore.util.exceptions.ResourcePersistenceException;
 import org.bson.Document;
 
@@ -71,6 +70,7 @@ public class UserRepository implements CrudRepository<AppUser> {
 
     }
 
+    // TODO implement this so that we can prevent multiple users from having the same username!
     public AppUser findUserByUsername(String username) {
         return null;
     }
