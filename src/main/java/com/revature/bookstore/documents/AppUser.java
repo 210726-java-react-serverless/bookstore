@@ -1,8 +1,15 @@
 package com.revature.bookstore.documents;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
+
+import java.awt.image.TileObserver;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class AppUser {
 
     private String id;
@@ -13,6 +20,10 @@ public class AppUser {
     private String password;
     private Address address;
     private LocalDateTime registrationTime;
+
+    public AppUser() {
+        super();
+    }
 
     public AppUser(String firstName, String lastName, String email, String username, String password) {
         this.firstName = firstName;

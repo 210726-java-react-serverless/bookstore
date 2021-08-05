@@ -3,6 +3,7 @@ package com.revature.bookstore.screens;
 import com.revature.bookstore.documents.AppUser;
 import com.revature.bookstore.services.UserService;
 import com.revature.bookstore.util.ScreenRouter;
+import com.revature.bookstore.util.exceptions.AuthenticationException;
 
 import java.io.BufferedReader;
 
@@ -26,13 +27,14 @@ public class LoginScreen extends Screen {
         System.out.print("Password: ");
         String password = consoleReader.readLine();
 
-        AppUser authUser = userService.login(username, password);
-
-        if (authUser != null) {
-            System.out.printf("Login successful for user: %s!\n", authUser.getUsername());
+        try {
+            AppUser authUser = userService.login(username, password);
+            System.out.println("Login successful!");
             router.navigate("/dashboard");
-        } else {
-            System.out.println("No user found with provided credentials");
+        } catch (AuthenticationException ae) {
+            System.out.println("No user found with provided credentials!");
+            System.out.println("Navigating back to welcome screen...");
+            router.navigate("/welcome");
         }
 
 
