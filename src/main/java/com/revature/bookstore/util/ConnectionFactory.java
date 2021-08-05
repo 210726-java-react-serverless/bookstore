@@ -38,16 +38,19 @@ public class ConnectionFactory {
 
         // TODO obfuscate DB credentials
         // TODO abstract connection logic from here
-        try (MongoClient mongoClient = MongoClients.create(
+        try {
+            MongoClient mongoClient = MongoClients.create(
                 MongoClientSettings.builder()
                         .applyToClusterSettings(builder -> builder.hosts(Arrays.asList(new ServerAddress(ipAddress, port))))
                         .credential(MongoCredential.createScramSha1Credential(dbUsername, dbName, dbPassword.toCharArray()))
-                        .build()
-        )) {
+                        .build());
 
             MongoDatabase bookstoreDatabase = mongoClient.getDatabase("bookstore");
 
             return bookstoreDatabase;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
         }
 
     }

@@ -22,13 +22,11 @@ import java.util.Properties;
 
 public class UserRepository implements CrudRepository<AppUser> {
 
-    static MongoDatabase db = null;
+    MongoDatabase db = null;
 
     MongoDatabase getDBConnection() {
         if (db == null)
-        {
                 db = ConnectionFactory.createConnection();
-        }
         return db;
     }
 
@@ -66,9 +64,9 @@ public class UserRepository implements CrudRepository<AppUser> {
             Document queryDoc = new Document("username", username).append("password", password);
             Document authUserDoc = usersCollection.find(queryDoc).first();
 
-            if (authUserDoc == null) {
-                return null;
-            }
+//            if (authUserDoc == null) {
+//                return null;
+//            }
 
             ObjectMapper mapper = new ObjectMapper();
             AppUser authUser = mapper.readValue(authUserDoc.toJson(), AppUser.class);
