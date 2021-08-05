@@ -41,7 +41,6 @@ public class AppState {
                 e.printStackTrace();
             }
         }
-
     }
 
     // Switches 'appRunning' to false, ending the while loop and
