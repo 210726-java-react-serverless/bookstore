@@ -13,6 +13,7 @@ import java.util.Set;
 */
 public class ScreenRouter {
 
+    private static String username;
     private Screen currentScreen;
     private final Set<Screen> screens = new HashSet<>();
 
@@ -26,6 +27,18 @@ public class ScreenRouter {
                                .filter(screen -> screen.getRoute().equals(route))
                                .findFirst()
                                .orElseThrow(ScreenNotFoundException::new);
+    }
+
+    public void navigate(String route, String username) {
+        this.username = username;
+        currentScreen = screens.stream()
+                .filter(screen -> screen.getRoute().equals(route))
+                .findFirst()
+                .orElseThrow(ScreenNotFoundException::new);
+    }
+
+    public static String getUsername() {
+        return username;
     }
 
     public Screen getCurrentScreen() {
