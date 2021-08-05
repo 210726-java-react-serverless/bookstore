@@ -47,4 +47,8 @@ public class ScreenRouter {
     public int historySize() {
         return history.size();
     }
+
+    public boolean hasHistory() {
+        return history.size() > 0;
+    }
 }
