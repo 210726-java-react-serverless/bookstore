@@ -31,11 +31,14 @@ public class AppState {
     }
 
     public void startup() {
-        router.navigate("/welcome");
 
+
+
+        router.navigate("/welcome");
         while (appRunning) {
             try {
                 router.getCurrentScreen().render();
+
             } catch (Exception e) {
                 e.printStackTrace();
             }

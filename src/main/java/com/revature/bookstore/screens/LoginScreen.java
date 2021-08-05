@@ -24,8 +24,13 @@ public class LoginScreen extends Screen {
         System.out.print("Username: ");
         String username = consoleReader.readLine();
 
+        if(username.equals("b")){
+            router.getPreviousScreen().render() ;
+        }
+
         System.out.print("Password: ");
         String password = consoleReader.readLine();
+
 
         try {
             AppUser authUser = userService.login(username, password);

@@ -13,6 +13,7 @@ import java.util.Set;
 */
 public class ScreenRouter {
 
+    private Screen previousScreen;
     private Screen currentScreen;
     private final Set<Screen> screens = new HashSet<>();
 
@@ -22,14 +23,26 @@ public class ScreenRouter {
     }
 
     public void navigate(String route) {
+        previousScreen = currentScreen;
         currentScreen = screens.stream()
                                .filter(screen -> screen.getRoute().equals(route))
                                .findFirst()
                                .orElseThrow(ScreenNotFoundException::new);
     }
 
+    //public void navigateBack(String PreviousScreen){
+      //  previousScreen = screens.
+    //}
+
     public Screen getCurrentScreen() {
         return currentScreen;
     }
 
+    public Screen getPreviousScreen() {
+        return previousScreen;
+    }
+
+    public void setPreviousScreen(Screen previousScreen) {
+        this.previousScreen = previousScreen;
+    }
 }
