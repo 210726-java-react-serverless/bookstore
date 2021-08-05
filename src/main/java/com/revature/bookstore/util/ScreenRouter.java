@@ -51,4 +51,8 @@ public class ScreenRouter {
     public boolean hasHistory() {
         return history.size() > 0;
     }
+
+    public void clearHistory() {
+        history.clear();
+    }
 }
