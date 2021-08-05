@@ -1,5 +1,6 @@
 package com.revature.bookstore.services;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.revature.bookstore.documents.AppUser;
 import com.revature.bookstore.repos.UserRepository;
 import com.revature.bookstore.util.exceptions.AuthenticationException;
@@ -28,7 +29,7 @@ public class UserService {
 
     }
 
-    public AppUser login(String username, String password) {
+    public AppUser login(String username, String password) throws JsonProcessingException {
 
         if (username == null || username.trim().equals("") || password == null || password.trim().equals("")) {
             throw new InvalidRequestException("Invalid user credentials provided!");
