@@ -21,7 +21,7 @@ public class LoginScreen extends Screen {
         System.out.println("\nUser Login\n" +
                 "1) Login\n" +
                 "2) Go Back");
-        System.out.println("> ");
+        System.out.print("> ");
         int userChoice = Integer.parseInt(consoleReader.readLine());
 
         switch (userChoice) {
