@@ -49,7 +49,7 @@ public class UserService {
 
         session.setCurrentUser(authUser);
 
-        return authUser; // TODO we need to store this value within app memory to use elsewhere
+        return authUser;
 
     }
 
