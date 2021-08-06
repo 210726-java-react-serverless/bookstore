@@ -7,6 +7,7 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.revature.bookstore.documents.AppUser;
 import com.revature.bookstore.util.MongoClientFactory;
+import com.revature.bookstore.util.exceptions.DataSourceException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bson.Document;
@@ -35,10 +36,11 @@ public class UserRepository implements CrudRepository<AppUser> {
 
         } catch (JsonMappingException jme) {
             logger.error("An exception occurred while mapping the document.", jme);
+            throw new DataSourceException("An exception occurred while mapping the document.", jme);
         } catch (Exception e) {
             logger.error("An unexpected exception occurred.", e);
+            throw new DataSourceException("An unexpected exception occurred.", e);
         }
-        return null; // This was causing an error on my IDE. Returned null if it reaches the end with no authUser.
     }
 
     // TODO implement this so that we can prevent multiple users from having the same username!
@@ -73,8 +75,8 @@ public class UserRepository implements CrudRepository<AppUser> {
 
         } catch (Exception e) {
             logger.error("An unexpected exception occurred.", e);
+            throw new DataSourceException("An unexpected exception occurred.", e);
         }
-        return null; // This was causing an error on my IDE. Returned null if it cannot return a newUser.
     }
 
     @Override
