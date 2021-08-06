@@ -19,7 +19,19 @@ public class LoginScreen extends Screen {
     @Override
     public void render() throws Exception {
 
-        System.out.println("\nLogin to your account!\n");
+        System.out.println("\nUser Login\n" +
+                "1) Login\n" +
+                "2) Go Back");
+        System.out.print("> ");
+        int userChoice = Integer.parseInt(consoleReader.readLine());
+
+        switch (userChoice) {
+            case 1:
+                break;
+            case 2:
+                router.goToPrevious();
+                return;
+        }
 
         System.out.print("Username: ");
         String username = consoleReader.readLine();

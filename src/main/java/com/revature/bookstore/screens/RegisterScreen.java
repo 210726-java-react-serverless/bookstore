@@ -21,6 +21,20 @@ public class RegisterScreen extends Screen {
     @Override
     public void render() throws Exception {
 
+        System.out.println("\nUser Registration\n" +
+                           "1) Register\n" +
+                           "2) Go Back");
+        System.out.println("> ");
+        int userChoice = Integer.parseInt(consoleReader.readLine());
+
+        switch (userChoice) {
+            case 1:
+                break;
+            case 2:
+                router.goToPrevious();
+                return;
+        }
+
         System.out.println("\nRegister for a new account!");
 
         System.out.print("First name: ");

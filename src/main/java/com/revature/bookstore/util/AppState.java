@@ -9,7 +9,7 @@ import java.io.InputStreamReader;
 
 public class AppState {
 
-    private boolean appRunning;
+    private static boolean appRunning;
     private final ScreenRouter router;
 
     public AppState() {
@@ -40,7 +40,12 @@ public class AppState {
                 e.printStackTrace();
             }
         }
+    }
 
+    // Switches 'appRunning' to false, ending the while loop and
+    // closing the app through super's main.
+    public static void shutdown() {
+        appRunning = false;
     }
 
 }
