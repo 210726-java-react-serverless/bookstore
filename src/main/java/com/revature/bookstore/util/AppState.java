@@ -18,14 +18,15 @@ public class AppState {
         router = new ScreenRouter();
         BufferedReader consoleReader = new BufferedReader(new InputStreamReader(System.in));
 
+        UserSession userSession = new UserSession();
         UserRepository userRepo = new UserRepository();
-        UserService userService = new UserService(userRepo);
+        UserService userService = new UserService(userRepo, userSession);
 
 
         router.addScreen(new WelcomeScreen(consoleReader, router))
               .addScreen(new LoginScreen(consoleReader, router, userService))
               .addScreen(new RegisterScreen(consoleReader, router, userService))
-              .addScreen(new DashboardScreen(consoleReader, router))
+              .addScreen(new DashboardScreen(consoleReader, router, userService))
               .addScreen(new UserProfileScreen(consoleReader, router));
 
     }
