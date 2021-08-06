@@ -47,6 +47,11 @@ public class UserRepository implements CrudRepository<AppUser> {
         return null;
     }
 
+    // TODO implement this so that we can prevent multiple users from having the same email!
+    public AppUser findUserByEmail(String email) {
+        return null;
+    }
+
     @Override
     public AppUser findById(int id) {
         return null;
