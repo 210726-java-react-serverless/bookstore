@@ -2,17 +2,18 @@ package com.revature.bookstore.repos;
 
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.revature.bookstore.documents.AppUser;
-
 import com.revature.bookstore.util.MongoClientFactory;
-import com.revature.bookstore.util.exceptions.DataSourceException;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.bson.Document;
 
 public class UserRepository implements CrudRepository<AppUser> {
+
+    private final Logger logger = LogManager.getLogger(UserRepository.class);
 
     public AppUser findUserByCredentials(String username, String password) {
 
@@ -33,13 +34,11 @@ public class UserRepository implements CrudRepository<AppUser> {
             return authUser;
 
         } catch (JsonMappingException jme) {
-            jme.printStackTrace(); // TODO log this to a file
-            throw new DataSourceException("An exception occurred while mapping the document.", jme);
+            logger.error("An exception occurred while mapping the document.", jme);
         } catch (Exception e) {
-            e.printStackTrace(); // TODO log this to a file
-            throw new DataSourceException("An unexpected exception occurred.", e);
+            logger.error("An unexpected exception occurred.", e);
         }
-
+        return null; // This was causing an error on my IDE. Returned null if it reaches the end with no authUser.
     }
 
     // TODO implement this so that we can prevent multiple users from having the same username!
@@ -73,10 +72,9 @@ public class UserRepository implements CrudRepository<AppUser> {
             return newUser;
 
         } catch (Exception e) {
-            e.printStackTrace(); // TODO log this to a file
-            throw new DataSourceException("An unexpected exception occurred.", e);
+            logger.error("An unexpected exception occurred.", e);
         }
-
+        return null; // This was causing an error on my IDE. Returned null if it cannot return a newUser.
     }
 
     @Override
