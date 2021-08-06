@@ -18,9 +18,7 @@ public class LoginScreen extends Screen {
     @Override
     public void render() throws Exception {
 
-        System.out.println("\nLogin to your account!\n");
-
-        System.out.println("\nUser Registration\n" +
+        System.out.println("\nUser Login\n" +
                 "1) Login\n" +
                 "2) Go Back");
         System.out.println("> ");
