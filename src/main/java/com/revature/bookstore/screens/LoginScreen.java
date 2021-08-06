@@ -21,15 +21,24 @@ public class LoginScreen extends Screen {
 
         System.out.println("\nUser Login\n" +
                 "1) Login\n" +
-                "2) Go Back");
+                "2) Go Back\n");
         System.out.print("> ");
-        int userChoice = Integer.parseInt(consoleReader.readLine());
+
+        int userChoice = 0;
+        try {
+            userChoice = Integer.parseInt(consoleReader.readLine());
+        } catch(Exception e) {
+            //User choice will still be 0 and will hit default below
+        }
 
         switch (userChoice) {
             case 1:
                 break;
             case 2:
                 router.goToPrevious();
+                return;
+            default:
+                System.out.println("Invalid entry");
                 return;
         }
 
