@@ -3,14 +3,14 @@ package com.revature.bookstore.repos;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import org.bson.Document;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
-import com.revature.bookstore.documents.AppUser;
 
+import com.revature.bookstore.documents.AppUser;
 import com.revature.bookstore.util.MongoClientFactory;
 import com.revature.bookstore.util.exceptions.DataSourceException;
-import org.bson.Document;
 
 public class UserRepository implements CrudRepository<AppUser> {
 
@@ -47,6 +47,11 @@ public class UserRepository implements CrudRepository<AppUser> {
         return null;
     }
 
+    // TODO implement this so that we can prevent multiple users from having the same email!
+    public AppUser findUserByEmail(String email) {
+        return null;
+    }
+
     @Override
     public AppUser findById(int id) {
         return null;
@@ -55,9 +60,9 @@ public class UserRepository implements CrudRepository<AppUser> {
     @Override
     public AppUser save(AppUser newUser) {
 
+
         try {
-            MongoClient mongoClient = MongoClientFactory.getInstance()
-                                                        .getConnection();
+            MongoClient mongoClient = MongoClientFactory.getInstance().getConnection();
 
             MongoDatabase bookstoreDb = mongoClient.getDatabase("bookstore");
             MongoCollection<Document> usersCollection = bookstoreDb.getCollection("users");
