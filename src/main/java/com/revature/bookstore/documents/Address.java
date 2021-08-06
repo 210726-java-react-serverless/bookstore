@@ -5,14 +5,18 @@ import java.util.Objects;
 public class Address {
 
     private String unitNumber;
-    private String streetName;
+    private String street;
     private String city;
     private String state;
     private String postalCode;
 
-    public Address(String unitNumber, String streetName, String city, String state, String postalCode) {
+    public Address() {
+        super();
+    }
+
+    public Address(String unitNumber, String street, String city, String state, String postalCode) {
         this.unitNumber = unitNumber;
-        this.streetName = streetName;
+        this.street = street;
         this.city = city;
         this.state = state;
         this.postalCode = postalCode;
@@ -26,12 +30,12 @@ public class Address {
         this.unitNumber = unitNumber;
     }
 
-    public String getStreetName() {
-        return streetName;
+    public String getStreet() {
+        return street;
     }
 
-    public void setStreetName(String streetName) {
-        this.streetName = streetName;
+    public void setStreet(String street) {
+        this.street = street;
     }
 
     public String getCity() {
@@ -64,7 +68,7 @@ public class Address {
         if (o == null || getClass() != o.getClass()) return false;
         Address address = (Address) o;
         return Objects.equals(unitNumber, address.unitNumber)
-                && Objects.equals(streetName, address.streetName)
+                && Objects.equals(street, address.street)
                 && Objects.equals(city, address.city)
                 && Objects.equals(state, address.state)
                 && Objects.equals(postalCode, address.postalCode);
@@ -72,14 +76,14 @@ public class Address {
 
     @Override
     public int hashCode() {
-        return Objects.hash(unitNumber, streetName, city, state, postalCode);
+        return Objects.hash(unitNumber, street, city, state, postalCode);
     }
 
     @Override
     public String toString() {
         return "Address{" +
                 "unitNumber='" + unitNumber + '\'' +
-                ", streetName='" + streetName + '\'' +
+                ", street='" + street + '\'' +
                 ", city='" + city + '\'' +
                 ", state='" + state + '\'' +
                 ", postalCode='" + postalCode + '\'' +
