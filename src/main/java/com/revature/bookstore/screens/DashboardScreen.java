@@ -56,7 +56,7 @@ public class DashboardScreen  extends Screen {
                     System.out.println("Your input was invalid. Please try again");
                     System.out.println(menu);
             }
-        } while (!(userInput.equals("1") && !(userInput.equals("2"))));
+        } while (!(userInput.equals("1") || !(!userInput.equals("2"))));
 
     }
 
