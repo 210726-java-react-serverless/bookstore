@@ -21,15 +21,36 @@ import java.util.Properties;
 public class MongoClientFactory {
 
     private final static MongoClientFactory MONGO_CLIENT_FACTORY = new MongoClientFactory();
+    private final MongoClient mongoClient;
     private final Properties dbProperties = new Properties();
 
     private MongoClientFactory() {
+
         try {
+
             dbProperties.load(new FileReader("src/main/resources/application.properties"));
+
+            String ipAddress = dbProperties.getProperty("ipAddress");
+            int port = Integer.parseInt(dbProperties.getProperty("port"));
+            String dbName = dbProperties.getProperty("dbName");
+            String dbUsername = dbProperties.getProperty("username");
+            char[] dbPassword = dbProperties.getProperty("password").toCharArray();
+
+            MongoCredential credentials = MongoCredential.createCredential(dbUsername, dbName, dbPassword);
+            List<ServerAddress> hosts = Arrays.asList(new ServerAddress(ipAddress, port));
+
+            MongoClientSettings settings = MongoClientSettings.builder()
+                                                              .applyToClusterSettings(builder -> builder.hosts(hosts))
+                                                              .credential(credentials)
+                                                              .build();
+
+            mongoClient = MongoClients.create(settings);
+
         } catch (Exception e) {
             e.printStackTrace();
             throw new ResourcePersistenceException("Unable to load properties file.");
         }
+
     }
 
     public static MongoClientFactory getInstance() {
@@ -37,23 +58,7 @@ public class MongoClientFactory {
     }
 
     public MongoClient getMongoClient() {
-
-        String ipAddress = dbProperties.getProperty("ipAddress");
-        int port = Integer.parseInt(dbProperties.getProperty("port"));
-        String dbName = dbProperties.getProperty("dbName");
-        String dbUsername = dbProperties.getProperty("username");
-        String dbPassword = dbProperties.getProperty("password");
-
-        MongoCredential credentials = MongoCredential.createCredential(dbUsername, dbName, dbPassword.toCharArray());
-        List<ServerAddress> hosts = Arrays.asList(new ServerAddress(ipAddress, port));
-
-        MongoClientSettings settings = MongoClientSettings.builder()
-                                                          .applyToClusterSettings(builder -> builder.hosts(hosts))
-                                                          .credential(credentials)
-                                                          .build();
-
-        return MongoClients.create(settings);
-
+        return mongoClient;
     }
 
 
