@@ -31,6 +31,7 @@ public class RegisterScreen extends Screen {
             userChoice = Integer.parseInt(consoleReader.readLine());
         } catch(Exception e) {
             //User choice will still be 0 and will hit default below
+            logger.error("Non-numeric string entered by user");
         }
 
         switch (userChoice) {
