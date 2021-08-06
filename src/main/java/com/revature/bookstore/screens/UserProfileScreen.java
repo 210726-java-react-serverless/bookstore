@@ -16,7 +16,7 @@ public class UserProfileScreen extends Screen {
          user profile information.
      */
     @Override
-    public void render() throws Exception {
+    public void render() {
         System.out.println("UserProfileScreen works!");
         System.out.println("Screen under construction, sending you back to the Dashboard Screen.");
         router.navigate("/dashboard");

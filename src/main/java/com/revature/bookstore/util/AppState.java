@@ -35,7 +35,7 @@ public class AppState {
 
         while (appRunning) {
             try {
-                router.getCurrentScreen().render();
+                    router.getCurrentScreen().render();
             } catch (Exception e) {
                 e.printStackTrace();
             }

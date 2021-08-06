@@ -8,6 +8,8 @@ import com.revature.bookstore.util.exceptions.ResourcePersistenceException;
 
 public class UserService {
 
+    AppUser user;
+
     private final UserRepository userRepo;
 
     public UserService(UserRepository userRepo) {
@@ -40,6 +42,7 @@ public class UserService {
             throw new AuthenticationException("Invalid credentials provided!");
         }
 
+       // this.username = username.getUsername();
         return authUser; // TODO we need to store this value within app memory to use elsewhere
 
     }

@@ -43,7 +43,7 @@ public class RegisterScreen extends Screen {
         try {
             userService.register(newUser);
             logger.info("User successfully registered!");
-            router.navigate("/dashboard");
+            router.navigate("/dashboard", username);
         } catch (Exception e) {
             logger.error(e.getMessage());
             logger.debug("User not registered!");

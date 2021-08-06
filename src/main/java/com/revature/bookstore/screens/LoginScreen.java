@@ -30,7 +30,7 @@ public class LoginScreen extends Screen {
         try {
             AppUser authUser = userService.login(username, password);
             System.out.println("Login successful!");
-            router.navigate("/dashboard");
+            router.navigate("/dashboard", username);
         } catch (AuthenticationException ae) {
             System.out.println("No user found with provided credentials!");
             System.out.println("Navigating back to welcome screen...");

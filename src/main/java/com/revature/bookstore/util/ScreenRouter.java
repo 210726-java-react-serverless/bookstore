@@ -15,6 +15,7 @@ public class ScreenRouter {
 
     private Screen currentScreen;
     private final Set<Screen> screens = new HashSet<>();
+    public String username;
 
     public ScreenRouter addScreen(Screen screen) {
         screens.add(screen);
@@ -27,6 +28,15 @@ public class ScreenRouter {
                                .findFirst()
                                .orElseThrow(ScreenNotFoundException::new);
     }
+
+    public void navigate(String route, String username) {
+        currentScreen = screens.stream()
+                .filter(screen -> screen.getRoute().equals(route))
+                .findFirst()
+                .orElseThrow(ScreenNotFoundException::new);
+        this.username = username;
+    }
+
 
     public Screen getCurrentScreen() {
         return currentScreen;
