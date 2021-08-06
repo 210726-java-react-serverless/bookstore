@@ -13,7 +13,10 @@ import java.util.Random;
  * The PasswordUtils class provides methods to generate encrypted passwords from plaintext, and to compare plaintext
  * passwords to encrypted passwords with their hash keys.
  *
- * Code provided by: Java T Point (https://www.javatpoint.com/how-to-encrypt-password-in-java)
+ * Code provided by: Java T Point
+ * Topic: "How to Encrypt Password in Java?"; Section: "Password-Based Encryption using Salt and Base64"
+ * URL: https://www.javatpoint.com/how-to-encrypt-password-in-java
+ *
  * Date: 06 August 2021
  */
 public class PasswordUtils {
