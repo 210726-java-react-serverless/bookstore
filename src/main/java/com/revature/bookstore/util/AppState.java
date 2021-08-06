@@ -47,6 +47,7 @@ public class AppState {
     // closing the app through super's main.
     public static void shutdown() {
         appRunning = false;
+        MongoClientFactory.getInstance().cleanUp();
     }
 
 }

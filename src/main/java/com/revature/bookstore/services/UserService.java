@@ -26,7 +26,6 @@ public class UserService {
         if (!isUserValid(newUser)) {
             throw new InvalidRequestException("Invalid user data provided!");
         }
-
         if (userRepo.findUserByUsername(newUser.getUsername()) != null) {
             throw new ResourcePersistenceException("Provided username is already taken!");
         }
