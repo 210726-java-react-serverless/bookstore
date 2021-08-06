@@ -32,12 +32,12 @@ public class UserRepository implements CrudRepository<AppUser> {
             AppUser authUser = mapper.readValue(authUserDoc.toJson(), AppUser.class);
             authUser.setId(authUserDoc.get("_id").toString());
 
-            // [Contains Legacy Logic] -- Verify password match: return user if correct
+            /* Verify password match: return user if correct */
             if(authUser.getKey() != null &&
                     PasswordUtils.verifyUserPassword(password, authUser.getPassword(), authUser.getKey())) {
                 System.out.println("Pass: " + password + ", Encryp: " + authUser.getPassword() + ", Key: " + authUser.getKey());
                 return authUser;
-            } else if(authUser.getPassword().equals(password)) {
+            } else if(authUser.getPassword().equals(password)) { // [Legacy Support] -- Unencrypted DB password support
                 System.out.println("Password: " + password);
                 return authUser;
             } else {
@@ -69,7 +69,7 @@ public class UserRepository implements CrudRepository<AppUser> {
     public AppUser save(AppUser newUser) {
 
         try {
-            // Encrypt newUser's plaintext password
+            /* Encrypt newUser's plaintext password */
             String salt = PasswordUtils.getSalt(30);
             String encryptedPassword = PasswordUtils.generateSecurePassword(newUser.getPassword(), salt);
 

@@ -10,9 +10,8 @@ import java.util.Base64;
 import java.util.Random;
 
 /**
- * The PasswordUtils class provides methods to generate encrypted passwords from plaintext, generate hash keys for
- * decrypting encrypted passwords back into their original plaintext form, and to compare plaintext passwords to
- * encrypted passwords with their hash keys.
+ * The PasswordUtils class provides methods to generate encrypted passwords from plaintext, and to compare plaintext
+ * passwords to encrypted passwords with their hash keys.
  *
  * Code provided by: Java T Point (https://www.javatpoint.com/how-to-encrypt-password-in-java)
  * Date: 06 August 2021
@@ -24,42 +23,49 @@ public class PasswordUtils {
     private static final int iterations = 10000;
     private static final int keylength = 256;
 
-    /* Method to generate the salt value. */
-    public static String getSalt(int length)
-    {
+    /**
+     * The getSalt method provides a "Salt value" which is used in encryption.
+     * @param length - length of the hash key.
+     * @return - final Salt value.
+     */
+    public static String getSalt(int length) {
         StringBuilder finalval = new StringBuilder(length);
 
-        for (int i = 0; i < length; i++)
-        {
+        for (int i = 0; i < length; i++) {
             finalval.append(characters.charAt(random.nextInt(characters.length())));
         }
 
         return new String(finalval);
     }
 
-    /* Method to generate the hash value */
-    public static byte[] hash(char[] password, byte[] salt)
-    {
+    /**
+     * The hash method hashes the plaintext password as a byte[] using the Salt value as a byte[].
+     * @param password - plaintext password in char array.
+     * @param salt - the hash key in byte array.
+     * @return - hashed password as a byte array.
+     */
+    public static byte[] hash(char[] password, byte[] salt) {
         PBEKeySpec spec = new PBEKeySpec(password, salt, iterations, keylength);
         Arrays.fill(password, Character.MIN_VALUE);
-        try
-        {
+        try {
             SecretKeyFactory skf = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
             return skf.generateSecret(spec).getEncoded();
         }
-        catch (NoSuchAlgorithmException | InvalidKeySpecException e)
-        {
+        catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
             throw new AssertionError("Error while hashing a password: " + e.getMessage(), e);
         }
-        finally
-        {
+        finally {
             spec.clearPassword();
         }
     }
 
-    /* Method to encrypt the password using the original password and salt value. */
-    public static String generateSecurePassword(String password, String salt)
-    {
+    /**
+     * The generateSecurePassword method fully encrypts a plaintext password via hash and Base64 encoding.
+     * @param password - plaintext password to be encrypted.
+     * @param salt - the hash key.
+     * @return - final encrypted password.
+     */
+    public static String generateSecurePassword(String password, String salt) {
         String finalval = null;
 
         byte[] securePassword = hash(password.toCharArray(), salt.getBytes());
@@ -69,10 +75,16 @@ public class PasswordUtils {
         return finalval;
     }
 
-    /* Method to verify if both password matches or not */
+    /**
+     * The verifyUserPassword compares a plaintext password to some encrypted password using its Salt value to encrypt
+     * the plaintext and determine if the result is equivalent to the encrypted password.
+     * @param providedPassword - plaintext password to check.
+     * @param securedPassword - encrypted password to check against.
+     * @param salt - hash key.
+     * @return - true if encrypted provided password matches secured password; false otherwise.
+     */
     public static boolean verifyUserPassword(String providedPassword,
-                                             String securedPassword, String salt)
-    {
+                                             String securedPassword, String salt) {
         boolean finalval = false;
 
         /* Generate New secure password with the same salt */
