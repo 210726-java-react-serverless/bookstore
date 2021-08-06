@@ -1,53 +1,23 @@
 package com.revature.bookstore.repos;
 
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import com.mongodb.MongoClientSettings;
-import com.mongodb.MongoCredential;
-import com.mongodb.ServerAddress;
 import com.mongodb.client.MongoClient;
-import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.revature.bookstore.documents.AppUser;
 
-import com.revature.bookstore.services.ConnectionFactory;
-import com.revature.bookstore.util.exceptions.ResourcePersistenceException;
+import com.revature.bookstore.util.MongoClientFactory;
+import com.revature.bookstore.util.exceptions.DataSourceException;
 import org.bson.Document;
-
-import java.io.FileReader;
-
-import java.util.Arrays;
-import java.util.Properties;
 
 public class UserRepository implements CrudRepository<AppUser> {
 
     public AppUser findUserByCredentials(String username, String password) {
 
-        Properties appProperties = new Properties();
-
         try {
-            appProperties.load(new FileReader("src/main/resources/application.properties"));
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new ResourcePersistenceException("Unable to load properties file.");
-        }
-
-        String ipAddress = appProperties.getProperty("ipAddress");
-        int port = Integer.parseInt(appProperties.getProperty("port"));
-        String dbName = appProperties.getProperty("dbName");
-        String dbUsername = appProperties.getProperty("username");
-        String dbPassword = appProperties.getProperty("password");
-
-        // TODO obfuscate DB credentials
-        // TODO abstract connection logic from here
-        try (MongoClient mongoClient = MongoClients.create(
-                MongoClientSettings.builder()
-                                   .applyToClusterSettings(builder -> builder.hosts(Arrays.asList(new ServerAddress(ipAddress, port))))
-                                   .credential(MongoCredential.createScramSha1Credential(dbUsername, dbName, dbPassword.toCharArray()))
-                                   .build()
-        )) {
-
+            MongoClient mongoClient = MongoClientFactory.getInstance().getConnection();
             MongoDatabase bookstoreDatabase = mongoClient.getDatabase("bookstore");
             MongoCollection<Document> usersCollection = bookstoreDatabase.getCollection("users");
             Document queryDoc = new Document("username", username).append("password", password);
@@ -60,14 +30,15 @@ public class UserRepository implements CrudRepository<AppUser> {
             ObjectMapper mapper = new ObjectMapper();
             AppUser authUser = mapper.readValue(authUserDoc.toJson(), AppUser.class);
             authUser.setId(authUserDoc.get("_id").toString());
-            System.out.println(authUser);
             return authUser;
 
+        } catch (JsonMappingException jme) {
+            jme.printStackTrace(); // TODO log this to a file
+            throw new DataSourceException("An exception occurred while mapping the document.", jme);
         } catch (Exception e) {
-            e.printStackTrace();
+            e.printStackTrace(); // TODO log this to a file
+            throw new DataSourceException("An unexpected exception occurred.", e);
         }
-
-        return null;
 
     }
 
@@ -84,25 +55,27 @@ public class UserRepository implements CrudRepository<AppUser> {
     @Override
     public AppUser save(AppUser newUser) {
 
-        // TODO obfuscate DB credentials
-        // TODO abstract connection logic from here
+        try {
+            MongoClient mongoClient = MongoClientFactory.getInstance()
+                                                        .getConnection();
 
-        ConnectionFactory connectionFactory = ConnectionFactory.getInstance();
-        MongoClient mongoClient = connectionFactory.getConnection();
+            MongoDatabase bookstoreDb = mongoClient.getDatabase("bookstore");
+            MongoCollection<Document> usersCollection = bookstoreDb.getCollection("users");
+            Document newUserDoc = new Document("firstName", newUser.getFirstName())
+                    .append("lastName", newUser.getLastName())
+                    .append("email", newUser.getEmail())
+                    .append("username", newUser.getUsername())
+                    .append("password", newUser.getPassword());
 
-        MongoDatabase bookstoreDb = mongoClient.getDatabase("bookstore");
-        MongoCollection<Document> usersCollection = bookstoreDb.getCollection("users");
-        Document newUserDoc = new Document("firstName", newUser.getFirstName())
-                                   .append("lastName", newUser.getLastName())
-                                   .append("email", newUser.getEmail())
-                                   .append("username", newUser.getUsername())
-                                   .append("password", newUser.getPassword());
+            usersCollection.insertOne(newUserDoc);
+            newUser.setId(newUserDoc.get("_id").toString());
 
-        usersCollection.insertOne(newUserDoc);
-        newUser.setId(newUserDoc.get("_id").toString());
-        System.out.println(newUser);
-        
-        return newUser;
+            return newUser;
+
+        } catch (Exception e) {
+            e.printStackTrace(); // TODO log this to a file
+            throw new DataSourceException("An unexpected exception occurred.", e);
+        }
 
     }
 
