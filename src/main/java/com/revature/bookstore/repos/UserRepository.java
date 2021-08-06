@@ -9,6 +9,7 @@ import com.mongodb.client.MongoDatabase;
 import com.revature.bookstore.documents.AppUser;
 
 import com.revature.bookstore.util.MongoClientFactory;
+import com.revature.bookstore.util.PasswordUtils;
 import com.revature.bookstore.util.exceptions.DataSourceException;
 import org.bson.Document;
 
@@ -20,7 +21,7 @@ public class UserRepository implements CrudRepository<AppUser> {
             MongoClient mongoClient = MongoClientFactory.getInstance().getConnection();
             MongoDatabase bookstoreDatabase = mongoClient.getDatabase("bookstore");
             MongoCollection<Document> usersCollection = bookstoreDatabase.getCollection("users");
-            Document queryDoc = new Document("username", username).append("password", password);
+            Document queryDoc = new Document("username", username);
             Document authUserDoc = usersCollection.find(queryDoc).first();
 
             if (authUserDoc == null) {
@@ -30,7 +31,19 @@ public class UserRepository implements CrudRepository<AppUser> {
             ObjectMapper mapper = new ObjectMapper();
             AppUser authUser = mapper.readValue(authUserDoc.toJson(), AppUser.class);
             authUser.setId(authUserDoc.get("_id").toString());
-            return authUser;
+
+            // [Contains Legacy Logic] -- Verify password match: return user if correct
+            if(authUser.getKey() != null &&
+                    PasswordUtils.verifyUserPassword(password, authUser.getPassword(), authUser.getKey())) {
+                System.out.println("Pass: " + password + ", Encryp: " + authUser.getPassword() + ", Key: " + authUser.getKey());
+                return authUser;
+            } else if(authUser.getPassword().equals(password)) {
+                System.out.println("Password: " + password);
+                return authUser;
+            } else {
+                System.out.println("Pass: " + password + ", Encryp: " + authUser.getPassword() + ", Key: " + authUser.getKey());
+                return null;
+            }
 
         } catch (JsonMappingException jme) {
             jme.printStackTrace(); // TODO log this to a file
@@ -56,6 +69,10 @@ public class UserRepository implements CrudRepository<AppUser> {
     public AppUser save(AppUser newUser) {
 
         try {
+            // Encrypt newUser's plaintext password
+            String salt = PasswordUtils.getSalt(30);
+            String encryptedPassword = PasswordUtils.generateSecurePassword(newUser.getPassword(), salt);
+
             MongoClient mongoClient = MongoClientFactory.getInstance()
                                                         .getConnection();
 
@@ -65,7 +82,8 @@ public class UserRepository implements CrudRepository<AppUser> {
                     .append("lastName", newUser.getLastName())
                     .append("email", newUser.getEmail())
                     .append("username", newUser.getUsername())
-                    .append("password", newUser.getPassword());
+                    .append("password", encryptedPassword)
+                    .append("key", salt);
 
             usersCollection.insertOne(newUserDoc);
             newUser.setId(newUserDoc.get("_id").toString());

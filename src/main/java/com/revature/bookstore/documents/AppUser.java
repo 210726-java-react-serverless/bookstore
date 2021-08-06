@@ -18,6 +18,7 @@ public class AppUser {
     private String email;
     private String username;
     private String password;
+    private String key;
     private Address address;
     private LocalDateTime registrationTime;
 
@@ -100,6 +101,10 @@ public class AppUser {
     public void setPassword(String password) {
         this.password = password;
     }
+
+    public String getKey() { return key; }
+
+    public void setKey(String key) { this.key = key; }
 
     public Address getAddress() {
         return address;
