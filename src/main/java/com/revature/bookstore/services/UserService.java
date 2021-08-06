@@ -2,6 +2,7 @@ package com.revature.bookstore.services;
 
 import com.revature.bookstore.documents.AppUser;
 import com.revature.bookstore.repos.UserRepository;
+import com.revature.bookstore.util.UserSession;
 import com.revature.bookstore.util.exceptions.AuthenticationException;
 import com.revature.bookstore.util.exceptions.InvalidRequestException;
 import com.revature.bookstore.util.exceptions.ResourcePersistenceException;
@@ -9,9 +10,15 @@ import com.revature.bookstore.util.exceptions.ResourcePersistenceException;
 public class UserService {
 
     private final UserRepository userRepo;
+    private final UserSession session;
 
-    public UserService(UserRepository userRepo) {
+    public UserService(UserRepository userRepo, UserSession session) {
         this.userRepo = userRepo;
+        this.session = session;
+    }
+
+    public UserSession getSession() {
+        return session;
     }
 
     public AppUser register(AppUser newUser) {
@@ -39,6 +46,8 @@ public class UserService {
         if (authUser == null) {
             throw new AuthenticationException("Invalid credentials provided!");
         }
+
+        session.setCurrentUser(authUser);
 
         return authUser; // TODO we need to store this value within app memory to use elsewhere
 
