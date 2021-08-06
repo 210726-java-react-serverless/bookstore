@@ -24,7 +24,7 @@ public class RegisterScreen extends Screen {
         System.out.println("\nUser Registration\n" +
                            "1) Register\n" +
                            "2) Go Back");
-        System.out.println("> ");
+        System.out.print("> ");
         int userChoice = Integer.parseInt(consoleReader.readLine());
 
         switch (userChoice) {
