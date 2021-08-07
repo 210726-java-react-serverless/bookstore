@@ -23,15 +23,26 @@ public class RegisterScreen extends Screen {
 
         System.out.println("\nUser Registration\n" +
                            "1) Register\n" +
-                           "2) Go Back");
+                           "2) Go Back\n");
         System.out.println("> ");
-        int userChoice = Integer.parseInt(consoleReader.readLine());
+
+        int userChoice = 0;
+        try {
+            userChoice = Integer.parseInt(consoleReader.readLine());
+        } catch(Exception e) {
+            //User choice will still be 0 and will hit default below
+            logger.error("Non-numeric string entered by user");
+        }
+
 
         switch (userChoice) {
             case 1:
                 break;
             case 2:
                 router.goToPrevious();
+                return;
+            default:
+                System.out.println("Invalid entry");
                 return;
         }
 
