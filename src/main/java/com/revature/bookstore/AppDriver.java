@@ -1,12 +1,14 @@
 package com.revature.bookstore;
 
-import com.revature.bookstore.util.AppState;
+import com.revature.bookstore.util.AppServer;
 
 public class AppDriver {
 
     public static void main(String[] args) {
-        AppState app = new AppState();
+
+        AppServer app = AppServer.getInstance();
         app.startup();
+
     }
 
 }

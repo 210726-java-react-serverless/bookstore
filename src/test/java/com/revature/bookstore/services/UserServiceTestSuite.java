@@ -1,12 +1,10 @@
 package com.revature.bookstore.services;
 
-import com.revature.bookstore.documents.AppUser;
-import com.revature.bookstore.repos.UserRepository;
-import com.revature.bookstore.util.UserSession;
+import com.revature.bookstore.datasource.documents.AppUser;
+import com.revature.bookstore.datasource.repos.UserRepository;
 import com.revature.bookstore.util.exceptions.InvalidRequestException;
 import com.revature.bookstore.util.exceptions.ResourcePersistenceException;
 import org.junit.*;
-import org.mockito.Mockito;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -15,14 +13,12 @@ public class UserServiceTestSuite {
 
     UserService sut;
 
-    private UserSession mockUserSession;
     private UserRepository mockUserRepo;
 
     @Before
     public void beforeEachTest() {
-        mockUserSession = mock(UserSession.class);
         mockUserRepo = mock(UserRepository.class);
-        sut = new UserService(mockUserRepo, mockUserSession);
+        sut = new UserService(mockUserRepo);
     }
 
     @After

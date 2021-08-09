@@ -1,4 +1,4 @@
-package com.revature.bookstore.documents;
+package com.revature.bookstore.datasource.documents;
 
 public class ElectronicFormat extends BookFormat {
 

@@ -1,4 +1,4 @@
-package com.revature.bookstore.util;
+package com.revature.bookstore.datasource.util;
 
 import com.mongodb.MongoClientSettings;
 import com.mongodb.MongoCredential;

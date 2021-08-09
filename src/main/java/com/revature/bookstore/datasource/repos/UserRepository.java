@@ -1,4 +1,4 @@
-package com.revature.bookstore.repos;
+package com.revature.bookstore.datasource.repos;
 
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -7,17 +7,17 @@ import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 
-import com.revature.bookstore.documents.AppUser;
-import com.revature.bookstore.util.MongoClientFactory;
+import com.revature.bookstore.datasource.documents.AppUser;
+import com.revature.bookstore.datasource.util.MongoClientFactory;
 import com.revature.bookstore.util.exceptions.DataSourceException;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.bson.Document;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class UserRepository implements CrudRepository<AppUser> {
 
-    private final Logger logger = LogManager.getLogger(UserRepository.class);
+    private final Logger logger = LoggerFactory.getLogger(UserRepository.class);
 
     public AppUser findUserByCredentials(String username, String password) {
 

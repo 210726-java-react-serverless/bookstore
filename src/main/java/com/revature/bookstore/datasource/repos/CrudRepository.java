@@ -1,4 +1,4 @@
-package com.revature.bookstore.repos;
+package com.revature.bookstore.datasource.repos;
 
 public interface CrudRepository<T> {
 

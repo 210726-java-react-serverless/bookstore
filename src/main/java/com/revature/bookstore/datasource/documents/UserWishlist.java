@@ -1,21 +1,21 @@
-package com.revature.bookstore.documents;
+package com.revature.bookstore.datasource.documents;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
-public class UserFavorites {
+public class UserWishlist {
 
     private String id;
     private String username;
-    private List<Book> favorites = new ArrayList<>();
+    private List<Book> wishlist = new ArrayList<>();
 
-    public UserFavorites(String username) {
+    public UserWishlist(String username) {
         this.username = username;
     }
 
-    public UserFavorites(String id, String username) {
+    public UserWishlist(String id, String username) {
         this(username);
         this.id = id;
     }
@@ -36,16 +36,16 @@ public class UserFavorites {
         this.username = username;
     }
 
-    public List<Book> getFavorites() {
-        return favorites;
+    public List<Book> getWishlist() {
+        return wishlist;
     }
 
-    public void setFavorites(List<Book> favorites) {
-        this.favorites = favorites;
+    public void setWishlist(List<Book> wishlist) {
+        this.wishlist = wishlist;
     }
 
-    public UserFavorites addFavorites(Book... books) {
-        favorites.addAll(Arrays.asList(books));
+    public UserWishlist addToWishlist(Book... books) {
+        wishlist.addAll(Arrays.asList(books));
         return this;
     }
 
@@ -53,21 +53,21 @@ public class UserFavorites {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        UserFavorites that = (UserFavorites) o;
-        return Objects.equals(id, that.id) && Objects.equals(username, that.username) && Objects.equals(favorites, that.favorites);
+        UserWishlist that = (UserWishlist) o;
+        return Objects.equals(id, that.id) && Objects.equals(username, that.username) && Objects.equals(wishlist, that.wishlist);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, username, favorites);
+        return Objects.hash(id, username, wishlist);
     }
 
     @Override
     public String toString() {
-        return "UserFavorites{" +
+        return "UserWishlist{" +
                 "id='" + id + '\'' +
                 ", username='" + username + '\'' +
-                ", favorites=" + favorites +
+                ", wishlist=" + wishlist +
                 '}';
     }
 
