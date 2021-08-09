@@ -34,7 +34,6 @@ public class RegisterScreen extends Screen {
             logger.error("Non-numeric string entered by user");
         }
 
-
         switch (userChoice) {
             case 1:
                 break;

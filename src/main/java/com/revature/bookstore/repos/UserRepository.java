@@ -9,11 +9,15 @@ import com.mongodb.client.MongoDatabase;
 
 import com.revature.bookstore.documents.AppUser;
 import com.revature.bookstore.util.MongoClientFactory;
+import com.revature.bookstore.util.PasswordUtils;
 import com.revature.bookstore.util.exceptions.DataSourceException;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bson.Document;
+
+import java.io.FileReader;
+import java.util.Properties;
 
 public class UserRepository implements CrudRepository<AppUser> {
 
@@ -25,7 +29,7 @@ public class UserRepository implements CrudRepository<AppUser> {
             MongoClient mongoClient = MongoClientFactory.getInstance().getConnection();
             MongoDatabase bookstoreDatabase = mongoClient.getDatabase("bookstore");
             MongoCollection<Document> usersCollection = bookstoreDatabase.getCollection("users");
-            Document queryDoc = new Document("username", username).append("password", password);
+            Document queryDoc = new Document("username", username);
             Document authUserDoc = usersCollection.find(queryDoc).first();
 
             if (authUserDoc == null) {
@@ -35,7 +39,16 @@ public class UserRepository implements CrudRepository<AppUser> {
             ObjectMapper mapper = new ObjectMapper();
             AppUser authUser = mapper.readValue(authUserDoc.toJson(), AppUser.class);
             authUser.setId(authUserDoc.get("_id").toString());
-            return authUser;
+
+
+
+            /* Verify password match: return user if correct */
+            if(authUser.getPassword() != null &&
+                    PasswordUtils.verifyUserPassword(password, authUser.getPassword(), PasswordUtils.getSaltFromProperties())) {
+                return authUser;
+            } else {
+                return null;
+            }
 
         } catch (JsonMappingException jme) {
             logger.error("An exception occurred while mapping the document.", jme);
@@ -66,7 +79,12 @@ public class UserRepository implements CrudRepository<AppUser> {
 
 
         try {
-            MongoClient mongoClient = MongoClientFactory.getInstance().getConnection();
+
+            String salt = PasswordUtils.getSaltFromProperties();
+            String encryptedPassword = PasswordUtils.generateSecurePassword(newUser.getPassword(), salt); // TODO: could be null... what then?
+
+            MongoClient mongoClient = MongoClientFactory.getInstance()
+                                                        .getConnection();
 
             MongoDatabase bookstoreDb = mongoClient.getDatabase("bookstore");
             MongoCollection<Document> usersCollection = bookstoreDb.getCollection("users");
@@ -74,7 +92,7 @@ public class UserRepository implements CrudRepository<AppUser> {
                     .append("lastName", newUser.getLastName())
                     .append("email", newUser.getEmail())
                     .append("username", newUser.getUsername())
-                    .append("password", newUser.getPassword());
+                    .append("password", encryptedPassword);
 
             usersCollection.insertOne(newUserDoc);
             newUser.setId(newUserDoc.get("_id").toString());
