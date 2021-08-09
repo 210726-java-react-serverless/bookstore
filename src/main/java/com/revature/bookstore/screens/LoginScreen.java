@@ -4,12 +4,15 @@ import com.revature.bookstore.documents.AppUser;
 import com.revature.bookstore.services.UserService;
 import com.revature.bookstore.util.ScreenRouter;
 import com.revature.bookstore.util.exceptions.AuthenticationException;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.BufferedReader;
 
 public class LoginScreen extends Screen {
 
     private final UserService userService;
+    private final Logger logger = LogManager.getLogger(RegisterScreen.class);
 
     public LoginScreen(BufferedReader consoleReader, ScreenRouter router, UserService userService) {
         super("LoginScreen", "/login", consoleReader, router);
@@ -21,15 +24,25 @@ public class LoginScreen extends Screen {
 
         System.out.println("\nUser Login\n" +
                 "1) Login\n" +
-                "2) Go Back");
+                "2) Go Back\n");
         System.out.print("> ");
-        int userChoice = Integer.parseInt(consoleReader.readLine());
+
+        int userChoice = 0;
+        try {
+            userChoice = Integer.parseInt(consoleReader.readLine());
+        } catch(Exception e) {
+            //User choice will still be 0 and will hit default below
+            logger.error("Non-numeric string entered by user");
+        }
 
         switch (userChoice) {
             case 1:
                 break;
             case 2:
                 router.goToPrevious();
+                return;
+            default:
+                System.out.println("Invalid entry");
                 return;
         }
 

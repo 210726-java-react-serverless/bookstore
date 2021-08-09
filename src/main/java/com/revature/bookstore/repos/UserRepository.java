@@ -6,17 +6,22 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
-import com.revature.bookstore.documents.AppUser;
 
+import com.revature.bookstore.documents.AppUser;
 import com.revature.bookstore.util.MongoClientFactory;
 import com.revature.bookstore.util.PasswordUtils;
 import com.revature.bookstore.util.exceptions.DataSourceException;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.bson.Document;
 
 import java.io.FileReader;
 import java.util.Properties;
 
 public class UserRepository implements CrudRepository<AppUser> {
+
+    private final Logger logger = LogManager.getLogger(UserRepository.class);
 
     public AppUser findUserByCredentials(String username, String password) {
 
@@ -46,17 +51,21 @@ public class UserRepository implements CrudRepository<AppUser> {
             }
 
         } catch (JsonMappingException jme) {
-            jme.printStackTrace(); // TODO log this to a file
+            logger.error("An exception occurred while mapping the document.", jme);
             throw new DataSourceException("An exception occurred while mapping the document.", jme);
         } catch (Exception e) {
-            e.printStackTrace(); // TODO log this to a file
+            logger.error("An unexpected exception occurred.", e);
             throw new DataSourceException("An unexpected exception occurred.", e);
         }
-
     }
 
     // TODO implement this so that we can prevent multiple users from having the same username!
     public AppUser findUserByUsername(String username) {
+        return null;
+    }
+
+    // TODO implement this so that we can prevent multiple users from having the same email!
+    public AppUser findUserByEmail(String email) {
         return null;
     }
 
@@ -68,8 +77,9 @@ public class UserRepository implements CrudRepository<AppUser> {
     @Override
     public AppUser save(AppUser newUser) {
 
+
         try {
-            /* Encrypt newUser's plaintext password */
+
             String salt = PasswordUtils.getSaltFromProperties();
             String encryptedPassword = PasswordUtils.generateSecurePassword(newUser.getPassword(), salt); // TODO: could be null... what then?
 
@@ -90,10 +100,9 @@ public class UserRepository implements CrudRepository<AppUser> {
             return newUser;
 
         } catch (Exception e) {
-            e.printStackTrace(); // TODO log this to a file
+            logger.error("An unexpected exception occurred.", e);
             throw new DataSourceException("An unexpected exception occurred.", e);
         }
-
     }
 
     @Override
