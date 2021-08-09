@@ -13,6 +13,9 @@ import com.revature.bookstore.util.PasswordUtils;
 import com.revature.bookstore.util.exceptions.DataSourceException;
 import org.bson.Document;
 
+import java.io.FileReader;
+import java.util.Properties;
+
 public class UserRepository implements CrudRepository<AppUser> {
 
     public AppUser findUserByCredentials(String username, String password) {
@@ -32,16 +35,13 @@ public class UserRepository implements CrudRepository<AppUser> {
             AppUser authUser = mapper.readValue(authUserDoc.toJson(), AppUser.class);
             authUser.setId(authUserDoc.get("_id").toString());
 
+
+
             /* Verify password match: return user if correct */
-            if(authUser.getKey() != null &&
-                    PasswordUtils.verifyUserPassword(password, authUser.getPassword(), authUser.getKey())) {
-                System.out.println("Pass: " + password + ", Encryp: " + authUser.getPassword() + ", Key: " + authUser.getKey());
-                return authUser;
-            } else if(authUser.getPassword().equals(password)) { // [Legacy Support] -- Unencrypted DB password support
-                System.out.println("Password: " + password);
+            if(authUser.getPassword() != null &&
+                    PasswordUtils.verifyUserPassword(password, authUser.getPassword(), PasswordUtils.getSaltFromProperties())) {
                 return authUser;
             } else {
-                System.out.println("Pass: " + password + ", Encryp: " + authUser.getPassword() + ", Key: " + authUser.getKey());
                 return null;
             }
 
@@ -70,8 +70,8 @@ public class UserRepository implements CrudRepository<AppUser> {
 
         try {
             /* Encrypt newUser's plaintext password */
-            String salt = PasswordUtils.getSalt(30);
-            String encryptedPassword = PasswordUtils.generateSecurePassword(newUser.getPassword(), salt);
+            String salt = PasswordUtils.getSaltFromProperties();
+            String encryptedPassword = PasswordUtils.generateSecurePassword(newUser.getPassword(), salt); // TODO: could be null... what then?
 
             MongoClient mongoClient = MongoClientFactory.getInstance()
                                                         .getConnection();
@@ -82,8 +82,7 @@ public class UserRepository implements CrudRepository<AppUser> {
                     .append("lastName", newUser.getLastName())
                     .append("email", newUser.getEmail())
                     .append("username", newUser.getUsername())
-                    .append("password", encryptedPassword)
-                    .append("key", salt);
+                    .append("password", encryptedPassword);
 
             usersCollection.insertOne(newUserDoc);
             newUser.setId(newUserDoc.get("_id").toString());

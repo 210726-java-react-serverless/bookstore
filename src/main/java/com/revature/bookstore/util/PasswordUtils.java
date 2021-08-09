@@ -2,11 +2,13 @@ package com.revature.bookstore.util;
 
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
+import java.io.FileReader;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.spec.InvalidKeySpecException;
 import java.util.Arrays;
 import java.util.Base64;
+import java.util.Properties;
 import java.util.Random;
 
 /**
@@ -39,6 +41,22 @@ public class PasswordUtils {
         }
 
         return new String(finalval);
+    }
+
+    /**
+     * The getSaltFromProperties class returns a pre-made encryption key from a properties file.
+     * @return - dat delicious salt.
+     */
+    public static String getSaltFromProperties() {
+        Properties appProperties = new Properties();
+        try {
+            appProperties.load(new FileReader("src/main/resources/application.properties"));
+            String salt = appProperties.getProperty("salt");
+            return salt;
+        } catch(Exception e) {
+            e.printStackTrace(); //TODO: add actual handling and logging
+            return null;
+        }
     }
 
     /**
