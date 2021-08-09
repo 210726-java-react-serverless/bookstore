@@ -64,7 +64,7 @@ public class UserRepository implements CrudRepository<AppUser> {
         try {
             MongoClient mongoClient = MongoClientFactory.getInstance().getConnection();
 
-            MongoDatabase bookstoreDb = mongoClient.getDatabase("bookstore");
+            MongoDatabase bookstoreDb = mongoClient.getDatabase("project0");
             MongoCollection<Document> usersCollection = bookstoreDb.getCollection("users");
             Document newUserDoc = new Document("firstName", newUser.getFirstName())
                     .append("lastName", newUser.getLastName())
