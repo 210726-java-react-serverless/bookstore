@@ -2,23 +2,27 @@ package com.revature.bookstore.services;
 
 import com.revature.bookstore.datasource.documents.AppUser;
 import com.revature.bookstore.datasource.repos.UserRepository;
+import com.revature.bookstore.util.PasswordUtils;
 import com.revature.bookstore.util.exceptions.InvalidRequestException;
 import com.revature.bookstore.util.exceptions.ResourcePersistenceException;
-import org.junit.*;
 
-import static org.mockito.ArgumentMatchers.any;
+import org.junit.*;
+import static org.junit.Assert.*;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
 public class UserServiceTestSuite {
 
     UserService sut;
 
+    private PasswordUtils mockPasswordUtils;
     private UserRepository mockUserRepo;
 
     @Before
     public void beforeEachTest() {
+        mockPasswordUtils = mock(PasswordUtils.class);
         mockUserRepo = mock(UserRepository.class);
-        sut = new UserService(mockUserRepo);
+        sut = new UserService(mockUserRepo, mockPasswordUtils);
     }
 
     @After
@@ -67,13 +71,16 @@ public class UserServiceTestSuite {
         AppUser expectedResult = new AppUser("valid", "valid", "valid", "valid", "valid");
         AppUser validUser = new AppUser("valid", "valid", "valid", "valid", "valid");
         when(mockUserRepo.save(any())).thenReturn(expectedResult);
+        when(mockPasswordUtils.generateSecurePassword(anyString())).thenReturn("encrypted");
 
         // Act
         AppUser actualResult = sut.register(validUser);
 
         // Assert
-        Assert.assertEquals(expectedResult, actualResult);
-        verify(mockUserRepo, times(2)).save(any());
+        assertEquals(expectedResult, actualResult);
+        assertNotEquals(expectedResult.getPassword(), actualResult.getPassword());
+        verify(mockUserRepo, times(1)).save(any());
+        verify(mockPasswordUtils, times(1)).generateSecurePassword(anyString());
 
     }
 
