@@ -1,6 +1,9 @@
 package com.revature.bookstore.util;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
+import com.mongodb.client.MongoClient;
 import com.revature.bookstore.datasource.util.MongoClientFactory;
 import com.revature.bookstore.web.filter.CorsFilter;
 import com.revature.bookstore.web.handlers.*;
@@ -11,9 +14,14 @@ import com.sun.net.httpserver.HttpServer;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.Executors;
+
+import static com.fasterxml.jackson.databind.DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE;
+import static com.fasterxml.jackson.databind.SerializationFeature.WRITE_DATES_AS_TIMESTAMPS;
 
 public class AppServer {
 
@@ -26,21 +34,34 @@ public class AppServer {
 
         try {
 
+            // Initialize the web server and allocate a thread pool for handling requests
             webServer = HttpServer.create(new InetSocketAddress(8080), 0);
             webServer.setExecutor(Executors.newFixedThreadPool(10));
 
+            // App Utilities
+            MongoClient mongoClient = MongoClientFactory.getInstance().getConnection();
+            PasswordUtils passwordUtils = new PasswordUtils();
             ObjectMapper mapper = new ObjectMapper();
-            UserRepository userRepo = new UserRepository();
-            UserService userService = new UserService(userRepo);
 
+            // App Components
+            UserRepository userRepo = new UserRepository(mongoClient);
+            UserService userService = new UserService(userRepo, passwordUtils);
+
+            // Filter for adding CORS headers
             CorsFilter corsFilter = new CorsFilter();
 
+            // Add our custom handlers to the handler list
             webHandlers = Arrays.asList(
                                         new TestHandler(mapper),
                                         new ShutdownHandler(mapper),
                                         new UserHandler(mapper, userService),
                                         new AuthHandler(mapper, userService)
                                        );
+
+            /*
+                For each handler, have the web server create a context based on the handler's
+                declared mapping, and add the CORS filter to the new context.
+             */
             webHandlers.forEach(handler -> {
                 HttpContext context = webServer.createContext(handler.getMapping(), handler);
                 context.getFilters().add(corsFilter);
