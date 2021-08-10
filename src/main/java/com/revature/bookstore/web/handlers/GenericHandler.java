@@ -1,10 +1,13 @@
 package com.revature.bookstore.web.handlers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+
 import com.revature.bookstore.web.dtos.ErrorResponse;
 import com.revature.bookstore.web.util.HandlerRequest;
 import com.revature.bookstore.web.util.HandlerResponse;
+
 import com.sun.net.httpserver.HttpExchange;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

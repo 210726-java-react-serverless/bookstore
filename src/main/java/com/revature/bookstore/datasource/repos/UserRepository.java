@@ -1,13 +1,7 @@
 package com.revature.bookstore.datasource.repos;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import com.mongodb.MongoWriteException;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoCollection;
-import com.mongodb.client.MongoDatabase;
 
 import com.revature.bookstore.datasource.documents.AppUser;
 import com.revature.bookstore.util.exceptions.DataSourceException;

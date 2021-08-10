@@ -6,7 +6,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.revature.bookstore.services.UserService;
 import com.revature.bookstore.util.exceptions.AuthenticationException;
 import com.revature.bookstore.web.dtos.Credentials;
-import com.revature.bookstore.web.dtos.ErrorResponse;
 import com.revature.bookstore.web.dtos.Principal;
 import com.revature.bookstore.web.util.HandlerRequest;
 import com.revature.bookstore.web.util.HandlerResponse;
