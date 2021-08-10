@@ -1,74 +1,80 @@
 package com.revature.bookstore.datasource.repos;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import com.mongodb.MongoWriteException;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 
 import com.revature.bookstore.datasource.documents.AppUser;
-import com.revature.bookstore.datasource.util.MongoClientFactory;
-import com.revature.bookstore.util.PasswordUtils;
 import com.revature.bookstore.util.exceptions.DataSourceException;
 
 import org.bson.Document;
+import org.bson.types.ObjectId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class UserRepository implements CrudRepository<AppUser> {
 
     private final Logger logger = LoggerFactory.getLogger(UserRepository.class);
+    private final MongoCollection<AppUser> usersCollection;
 
-    public AppUser findUserByCredentials(String username, String password) {
+    public UserRepository(MongoClient mongoClient) {
+        this.usersCollection = mongoClient.getDatabase("bookstore").getCollection("users", AppUser.class);
+    }
+
+    public AppUser findUserByCredentials(String username, String encryptedPassword) {
 
         try {
-            MongoClient mongoClient = MongoClientFactory.getInstance().getConnection();
-            MongoDatabase bookstoreDatabase = mongoClient.getDatabase("bookstore");
-            MongoCollection<Document> usersCollection = bookstoreDatabase.getCollection("users");
-            Document queryDoc = new Document("username", username);
-            Document authUserDoc = usersCollection.find(queryDoc).first();
 
-            if (authUserDoc == null) {
-                return null;
-            }
+            Document queryDoc = new Document("username", username).append("password", encryptedPassword);
+            return usersCollection.find(queryDoc).first();
 
-            ObjectMapper mapper = new ObjectMapper();
-            AppUser authUser = mapper.readValue(authUserDoc.toJson(), AppUser.class);
-            authUser.setId(authUserDoc.get("_id").toString());
-
-
-
-            /* Verify password match: return user if correct */
-            if(authUser.getPassword() != null &&
-                    PasswordUtils.verifyUserPassword(password, authUser.getPassword(), PasswordUtils.getSaltFromProperties())) {
-                return authUser;
-            } else {
-                return null;
-            }
-
-        } catch (JsonMappingException jme) {
-            logger.error("An exception occurred while mapping the document.", jme);
-            throw new DataSourceException("An exception occurred while mapping the document.", jme);
         } catch (Exception e) {
             logger.error("An unexpected exception occurred.", e);
             throw new DataSourceException("An unexpected exception occurred.", e);
         }
     }
 
-    // TODO implement this so that we can prevent multiple users from having the same username!
     public AppUser findUserByUsername(String username) {
-        return null;
+
+        try {
+            return usersCollection.find(new Document("username", username)).first();
+        } catch (Exception e) {
+            logger.error("An unexpected exception occurred.", e);
+            throw new DataSourceException("An unexpected exception occurred.", e);
+        }
+
     }
 
     // TODO implement this so that we can prevent multiple users from having the same email!
     public AppUser findUserByEmail(String email) {
-        return null;
+
+        try {
+            return usersCollection.find(new Document("email", email)).first();
+        } catch (Exception e) {
+            logger.error("An unexpected exception occurred.", e);
+            throw new DataSourceException("An unexpected exception occurred.", e);
+        }
+
     }
 
     @Override
-    public AppUser findById(int id) {
-        return null;
+    public AppUser findById(String id) {
+
+        try {
+
+            Document queryDoc = new Document("_id", id);
+            return usersCollection.find(queryDoc).first();
+
+        } catch (Exception e) {
+            logger.error("An unexpected exception occurred.", e);
+            throw new DataSourceException("An unexpected exception occurred.", e);
+        }
+
     }
 
     @Override
@@ -77,22 +83,8 @@ public class UserRepository implements CrudRepository<AppUser> {
 
         try {
 
-            String salt = PasswordUtils.getSaltFromProperties();
-            String encryptedPassword = PasswordUtils.generateSecurePassword(newUser.getPassword(), salt); // TODO: could be null... what then?
-
-            MongoClient mongoClient = MongoClientFactory.getInstance()
-                                                        .getConnection();
-
-            MongoDatabase bookstoreDb = mongoClient.getDatabase("bookstore");
-            MongoCollection<Document> usersCollection = bookstoreDb.getCollection("users");
-            Document newUserDoc = new Document("firstName", newUser.getFirstName())
-                    .append("lastName", newUser.getLastName())
-                    .append("email", newUser.getEmail())
-                    .append("username", newUser.getUsername())
-                    .append("password", encryptedPassword);
-
-            usersCollection.insertOne(newUserDoc);
-            newUser.setId(newUserDoc.get("_id").toString());
+            newUser.setId(new ObjectId().toString());
+            usersCollection.insertOne(newUser);
 
             return newUser;
 
