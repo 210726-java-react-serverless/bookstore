@@ -2,16 +2,21 @@ package com.revature.bookstore.services;
 
 import com.revature.bookstore.datasource.documents.AppUser;
 import com.revature.bookstore.datasource.repos.UserRepository;
+import com.revature.bookstore.util.PasswordUtils;
 import com.revature.bookstore.util.exceptions.AuthenticationException;
 import com.revature.bookstore.util.exceptions.InvalidRequestException;
 import com.revature.bookstore.util.exceptions.ResourcePersistenceException;
 
+import java.time.LocalDateTime;
+
 public class UserService {
 
     private final UserRepository userRepo;
+    private final PasswordUtils passwordUtils;
 
-    public UserService(UserRepository userRepo) {
+    public UserService(UserRepository userRepo, PasswordUtils passwordUtils) {
         this.userRepo = userRepo;
+        this.passwordUtils = passwordUtils;
     }
 
     public AppUser register(AppUser newUser) {
@@ -28,6 +33,10 @@ public class UserService {
             throw new ResourcePersistenceException("Provided username is already taken!");
         }
 
+        newUser.setRegistrationDateTime(LocalDateTime.now());
+        String encryptedPassword = passwordUtils.generateSecurePassword(newUser.getPassword());
+        newUser.setPassword(encryptedPassword);
+
         return userRepo.save(newUser);
 
     }
@@ -38,7 +47,8 @@ public class UserService {
             throw new InvalidRequestException("Invalid user credentials provided!");
         }
 
-        AppUser authUser = userRepo.findUserByCredentials(username, password);
+        String encryptedPassword = passwordUtils.generateSecurePassword(password);
+        AppUser authUser = userRepo.findUserByCredentials(username, encryptedPassword);
 
         if (authUser == null) {
             throw new AuthenticationException("Invalid credentials provided!");
