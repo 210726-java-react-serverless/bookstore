@@ -23,40 +23,29 @@ import java.util.Random;
  */
 public class PasswordUtils {
 
-    private static final Random random = new SecureRandom();
-    private static final String characters = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
-    private static final int iterations = 10000;
-    private static final int keylength = 256;
+    private String salt;
+    private final Random random = new SecureRandom();
 
-    /**
-     * The getSalt method provides a "Salt value" which is used in encryption.
-     * @param length - length of the hash key.
-     * @return - final Salt value.
-     */
-    public static String getSalt(int length) {
-        StringBuilder finalval = new StringBuilder(length);
 
-        for (int i = 0; i < length; i++) {
-            finalval.append(characters.charAt(random.nextInt(characters.length())));
-        }
-
-        return new String(finalval);
-    }
-
-    /**
-     * The getSaltFromProperties class returns a pre-made encryption key from a properties file.
-     * @return - dat delicious salt.
-     */
-    public static String getSaltFromProperties() {
+    public PasswordUtils() {
         Properties appProperties = new Properties();
         try {
             appProperties.load(new FileReader("src/main/resources/application.properties"));
-            String salt = appProperties.getProperty("salt");
-            return salt;
+            this.salt = appProperties.getProperty("salt");
+            if (salt == null) throw new IllegalStateException("No salt found for password encryption.");
         } catch(Exception e) {
-            e.printStackTrace(); //TODO: add actual handling and logging
-            return null;
+            e.printStackTrace();
         }
+    }
+
+    /**
+     * The generateSecurePassword method fully encrypts a plaintext password via hash and Base64 encoding.
+     * @param password - plaintext password to be encrypted.
+     * @return - final encrypted password.
+     */
+    public String generateSecurePassword(String password) {
+        byte[] securePassword = hash(password.toCharArray(), salt.getBytes());
+        return Base64.getEncoder().encodeToString(securePassword);
     }
 
     /**
@@ -65,55 +54,17 @@ public class PasswordUtils {
      * @param salt - the hash key in byte array.
      * @return - hashed password as a byte array.
      */
-    public static byte[] hash(char[] password, byte[] salt) {
-        PBEKeySpec spec = new PBEKeySpec(password, salt, iterations, keylength);
+    private byte[] hash(char[] password, byte[] salt) {
+        PBEKeySpec spec = new PBEKeySpec(password, salt, 10000, 256);
         Arrays.fill(password, Character.MIN_VALUE);
         try {
             SecretKeyFactory skf = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
             return skf.generateSecret(spec).getEncoded();
-        }
-        catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
+        } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
             throw new AssertionError("Error while hashing a password: " + e.getMessage(), e);
-        }
-        finally {
+        } finally {
             spec.clearPassword();
         }
     }
 
-    /**
-     * The generateSecurePassword method fully encrypts a plaintext password via hash and Base64 encoding.
-     * @param password - plaintext password to be encrypted.
-     * @param salt - the hash key.
-     * @return - final encrypted password.
-     */
-    public static String generateSecurePassword(String password, String salt) {
-        String finalval = null;
-
-        byte[] securePassword = hash(password.toCharArray(), salt.getBytes());
-
-        finalval = Base64.getEncoder().encodeToString(securePassword);
-
-        return finalval;
-    }
-
-    /**
-     * The verifyUserPassword compares a plaintext password to some encrypted password using its Salt value to encrypt
-     * the plaintext and determine if the result is equivalent to the encrypted password.
-     * @param providedPassword - plaintext password to check.
-     * @param securedPassword - encrypted password to check against.
-     * @param salt - hash key.
-     * @return - true if encrypted provided password matches secured password; false otherwise.
-     */
-    public static boolean verifyUserPassword(String providedPassword,
-                                             String securedPassword, String salt) {
-        boolean finalval = false;
-
-        /* Generate New secure password with the same salt */
-        String newSecurePassword = generateSecurePassword(providedPassword, salt);
-
-        /* Check if two passwords are equal */
-        finalval = newSecurePassword.equalsIgnoreCase(securedPassword);
-
-        return finalval;
-    }
 }
