@@ -15,7 +15,7 @@ public class AppUser {
     private String username;
     private String password;
     private Address address;
-    private LocalDateTime registrationTime;
+    private LocalDateTime registrationDateTime;
 
     public AppUser() {
         super();
@@ -34,18 +34,18 @@ public class AppUser {
         this.address = address;
     }
 
-    public AppUser(String firstName, String lastName, String email, String username, String password, LocalDateTime registrationTime) {
+    public AppUser(String firstName, String lastName, String email, String username, String password, LocalDateTime registrationDateTime) {
         this(firstName, lastName, email, username, password);
-        this.registrationTime = registrationTime;
+        this.registrationDateTime = registrationDateTime;
     }
 
-    public AppUser(String firstName, String lastName, String email, String username, String password, Address address, LocalDateTime registrationTime) {
+    public AppUser(String firstName, String lastName, String email, String username, String password, Address address, LocalDateTime registrationDateTime) {
         this(firstName, lastName, email, username, password, address);
-        this.registrationTime = registrationTime;
+        this.registrationDateTime = registrationDateTime;
     }
 
-    public AppUser(String id, String firstName, String lastName, String email, String username, String password, Address address, LocalDateTime registrationTime) {
-        this(firstName, lastName, email, username, password, address, registrationTime);
+    public AppUser(String id, String firstName, String lastName, String email, String username, String password, Address address, LocalDateTime registrationDateTime) {
+        this(firstName, lastName, email, username, password, address, registrationDateTime);
         this.id = id;
     }
 
@@ -105,12 +105,12 @@ public class AppUser {
         this.address = address;
     }
 
-    public LocalDateTime getRegistrationTime() {
-        return registrationTime;
+    public LocalDateTime getRegistrationDateTime() {
+        return registrationDateTime;
     }
 
-    public void setRegistrationTime(LocalDateTime registrationTime) {
-        this.registrationTime = registrationTime;
+    public void setRegistrationDateTime(LocalDateTime registrationDateTime) {
+        this.registrationDateTime = registrationDateTime;
     }
 
     @Override
@@ -118,12 +118,12 @@ public class AppUser {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         AppUser appUser = (AppUser) o;
-        return Objects.equals(id, appUser.id) && Objects.equals(firstName, appUser.firstName) && Objects.equals(lastName, appUser.lastName) && Objects.equals(email, appUser.email) && Objects.equals(username, appUser.username) && Objects.equals(password, appUser.password) && Objects.equals(address, appUser.address) && Objects.equals(registrationTime, appUser.registrationTime);
+        return Objects.equals(id, appUser.id) && Objects.equals(firstName, appUser.firstName) && Objects.equals(lastName, appUser.lastName) && Objects.equals(email, appUser.email) && Objects.equals(username, appUser.username) && Objects.equals(password, appUser.password) && Objects.equals(address, appUser.address) && Objects.equals(registrationDateTime, appUser.registrationDateTime);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, firstName, lastName, email, username, password, address, registrationTime);
+        return Objects.hash(id, firstName, lastName, email, username, password, address, registrationDateTime);
     }
 
     @Override
@@ -136,7 +136,7 @@ public class AppUser {
                 ", username='" + username + '\'' +
                 ", password='" + password + '\'' +
                 ", address=" + address +
-                ", registrationTime=" + registrationTime +
+                ", registrationDateTime=" + registrationDateTime +
                 '}';
     }
 
