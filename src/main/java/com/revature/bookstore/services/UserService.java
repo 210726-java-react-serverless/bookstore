@@ -8,6 +8,8 @@ import com.revature.bookstore.util.exceptions.InvalidRequestException;
 import com.revature.bookstore.util.exceptions.ResourcePersistenceException;
 
 import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.List;
 
 public class UserService {
 
@@ -17,6 +19,21 @@ public class UserService {
     public UserService(UserRepository userRepo, PasswordUtils passwordUtils) {
         this.userRepo = userRepo;
         this.passwordUtils = passwordUtils;
+    }
+
+    // TODO: make this actually talk to the datasource via the userRepo
+    public List<AppUser> findAll() {
+        AppUser user1 = new AppUser("a", "a", "a", "a", "a");
+        AppUser user2 = new AppUser("b", "b", "b", "b", "b");
+        AppUser user3 = new AppUser("c", "c", "c", "c", "c");
+        AppUser user4 = new AppUser("d", "d", "d", "d", "d");
+
+        return Arrays.asList(user1, user2, user3, user4);
+    }
+
+    // TODO: make this actually talk to the datasource via the userRepo
+    public AppUser findUserById(String id) {
+        return new AppUser("d", "d", "d", "d", "d");
     }
 
     public AppUser register(AppUser newUser) {

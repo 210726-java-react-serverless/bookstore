@@ -12,6 +12,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.io.PrintWriter;
 
@@ -39,6 +40,9 @@ public class AuthServlet extends HttpServlet {
             String payload = mapper.writeValueAsString(principal);
             respWriter.write(payload);
 
+            HttpSession session = req.getSession();
+            session.setAttribute("auth-user", principal);
+
         } catch (AuthenticationException ae) {
             resp.setStatus(401); // server's fault
             ErrorResponse errResp = new ErrorResponse(401, ae.getMessage());
@@ -46,6 +50,8 @@ public class AuthServlet extends HttpServlet {
         }  catch (Exception e) {
             e.printStackTrace();
             resp.setStatus(500); // server's fault
+            ErrorResponse errResp = new ErrorResponse(500, "The server experienced an issue, please try again later.");
+            respWriter.write(mapper.writeValueAsString(errResp));
         }
 
     }
