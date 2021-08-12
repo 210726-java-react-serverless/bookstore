@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.exc.MismatchedInputException;
 import com.revature.bookstore.datasource.documents.AppUser;
 import com.revature.bookstore.services.UserService;
 import com.revature.bookstore.util.exceptions.InvalidRequestException;
+import com.revature.bookstore.util.exceptions.ResourceNotFoundException;
 import com.revature.bookstore.util.exceptions.ResourcePersistenceException;
 import com.revature.bookstore.web.dtos.ErrorResponse;
 import com.revature.bookstore.web.dtos.Principal;
@@ -62,6 +63,10 @@ public class UserServlet extends HttpServlet {
                 respWriter.write(mapper.writeValueAsString(user));
             }
 
+        } catch (ResourceNotFoundException rnfe) {
+            resp.setStatus(404);
+            ErrorResponse errResp = new ErrorResponse(404, rnfe.getMessage());
+            respWriter.write(mapper.writeValueAsString(errResp));
         } catch (Exception e) {
             e.printStackTrace();
             resp.setStatus(500); // server's fault

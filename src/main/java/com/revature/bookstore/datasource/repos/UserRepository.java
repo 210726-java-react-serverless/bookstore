@@ -12,6 +12,9 @@ import org.bson.types.ObjectId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class UserRepository implements CrudRepository<AppUser> {
 
     private final Logger logger = LoggerFactory.getLogger(UserRepository.class);
@@ -45,7 +48,6 @@ public class UserRepository implements CrudRepository<AppUser> {
 
     }
 
-    // TODO implement this so that we can prevent multiple users from having the same email!
     public AppUser findUserByEmail(String email) {
 
         try {
@@ -54,6 +56,23 @@ public class UserRepository implements CrudRepository<AppUser> {
             logger.error("An unexpected exception occurred.", e);
             throw new DataSourceException("An unexpected exception occurred.", e);
         }
+
+    }
+
+    @Override
+    public List<AppUser> findAll() {
+
+        List<AppUser> users = new ArrayList<>();
+
+        try {
+            usersCollection.find().into(users);
+        } catch (Exception e) {
+            logger.error("An unexpected exception occurred.", e);
+            throw new DataSourceException("An unexpected exception occurred.", e);
+        }
+
+        return users;
+
 
     }
 
