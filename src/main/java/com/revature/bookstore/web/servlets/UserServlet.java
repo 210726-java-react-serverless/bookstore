@@ -7,8 +7,11 @@ import com.revature.bookstore.services.UserService;
 import com.revature.bookstore.util.exceptions.InvalidRequestException;
 import com.revature.bookstore.util.exceptions.ResourceNotFoundException;
 import com.revature.bookstore.util.exceptions.ResourcePersistenceException;
+import com.revature.bookstore.web.dtos.AppUserDTO;
 import com.revature.bookstore.web.dtos.ErrorResponse;
 import com.revature.bookstore.web.dtos.Principal;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.*;
@@ -18,6 +21,7 @@ import java.util.List;
 
 public class UserServlet extends HttpServlet {
 
+    private final Logger logger = LoggerFactory.getLogger(UserServlet.class);
     private final UserService userService;
     private final ObjectMapper mapper;
 
@@ -40,13 +44,17 @@ public class UserServlet extends HttpServlet {
 
         // Check to see if there was a valid auth-user attribute
         if (requestingUser == null) {
+            String msg = "No session found, please login.";
+            logger.info(msg);
             resp.setStatus(401);
-            ErrorResponse errResp = new ErrorResponse(401, "No session found, please login.");
+            ErrorResponse errResp = new ErrorResponse(401, msg);
             respWriter.write(mapper.writeValueAsString(errResp));
             return;
         } else if (!requestingUser.getUsername().equals("wsingleton")) {
+            String msg = "Unauthorized attempt to access endpoint made by: " + requestingUser.getUsername();
+            logger.info(msg);
             resp.setStatus(403);
-            ErrorResponse errResp = new ErrorResponse(403, "Unauthorized attempt to access endpoint made by: " + requestingUser.getUsername());
+            ErrorResponse errResp = new ErrorResponse(403, msg);
             respWriter.write(mapper.writeValueAsString(errResp));
             return;
         }
@@ -56,10 +64,10 @@ public class UserServlet extends HttpServlet {
         try {
 
             if (userIdParam == null) {
-                List<AppUser> users = userService.findAll();
+                List<AppUserDTO> users = userService.findAll();
                 respWriter.write(mapper.writeValueAsString(users));
             } else {
-                AppUser user = userService.findUserById(userIdParam);
+                AppUserDTO user = userService.findUserById(userIdParam);
                 respWriter.write(mapper.writeValueAsString(user));
             }
 
@@ -89,7 +97,6 @@ public class UserServlet extends HttpServlet {
             Principal principal = new Principal(userService.register(newUser)); // after this, the newUser should have a new id
             String payload = mapper.writeValueAsString(principal);
             respWriter.write(payload);
-//            resp.addCookie(new Cookie("myCookie", "mmmm cookies..."));
             resp.setStatus(201);
 
         } catch (InvalidRequestException | MismatchedInputException e) {

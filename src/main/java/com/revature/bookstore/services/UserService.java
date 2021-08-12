@@ -7,9 +7,13 @@ import com.revature.bookstore.util.exceptions.AuthenticationException;
 import com.revature.bookstore.util.exceptions.InvalidRequestException;
 import com.revature.bookstore.util.exceptions.ResourceNotFoundException;
 import com.revature.bookstore.util.exceptions.ResourcePersistenceException;
+import com.revature.bookstore.web.dtos.AppUserDTO;
+import com.revature.bookstore.web.dtos.Principal;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class UserService {
 
@@ -21,11 +25,14 @@ public class UserService {
         this.passwordUtils = passwordUtils;
     }
 
-    public List<AppUser> findAll() {
-        return userRepo.findAll();
+    public List<AppUserDTO> findAll() {
+        return userRepo.findAll()
+                       .stream()
+                       .map(AppUserDTO::new)
+                       .collect(Collectors.toList());
     }
 
-    public AppUser findUserById(String id) {
+    public AppUserDTO findUserById(String id) {
 
         if (id == null || id.trim().isEmpty()) {
             throw new InvalidRequestException("Invalid id provided");
@@ -37,7 +44,7 @@ public class UserService {
             throw new ResourceNotFoundException();
         }
 
-        return user;
+        return new AppUserDTO(user);
 
     }
 
@@ -63,7 +70,7 @@ public class UserService {
 
     }
 
-    public AppUser login(String username, String password) {
+    public Principal login(String username, String password) {
 
         if (username == null || username.trim().equals("") || password == null || password.trim().equals("")) {
             throw new InvalidRequestException("Invalid user credentials provided!");
@@ -76,7 +83,7 @@ public class UserService {
             throw new AuthenticationException("Invalid credentials provided!");
         }
 
-        return authUser;
+        return new Principal(authUser);
 
     }
 

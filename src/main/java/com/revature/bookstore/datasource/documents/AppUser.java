@@ -1,11 +1,8 @@
 package com.revature.bookstore.datasource.documents;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-
 import java.time.LocalDateTime;
 import java.util.Objects;
 
-@JsonIgnoreProperties(ignoreUnknown = true)
 public class AppUser {
 
     private String id;

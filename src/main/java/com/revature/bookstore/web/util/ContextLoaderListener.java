@@ -24,6 +24,8 @@ public class ContextLoaderListener implements ServletContextListener {
     @Override
     public void contextInitialized(ServletContextEvent sce) {
 
+        System.out.println("It's aliiiiive!!!");
+
         MongoClient mongoClient = MongoClientFactory.getInstance().getConnection();
         PasswordUtils passwordUtils = new PasswordUtils();
         ObjectMapper mapper = new ObjectMapper().findAndRegisterModules();
@@ -43,6 +45,7 @@ public class ContextLoaderListener implements ServletContextListener {
 
     @Override
     public void contextDestroyed(ServletContextEvent sce) {
+        System.out.println("Goodbye, cruel world!!!");
         MongoClientFactory.getInstance().cleanUp();
     }
 

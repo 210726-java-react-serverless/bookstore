@@ -31,12 +31,13 @@ public class AuthServlet extends HttpServlet {
 
         PrintWriter respWriter = resp.getWriter();
         resp.setContentType("application/json");
+        String testHeader = req.getHeader("test-header");
+        System.out.println(testHeader);
 
         try {
 
             Credentials creds = mapper.readValue(req.getInputStream(), Credentials.class);
-            AppUser authUser = userService.login(creds.getUsername(), creds.getPassword());
-            Principal principal = new Principal(authUser);
+            Principal principal = userService.login(creds.getUsername(), creds.getPassword());
             String payload = mapper.writeValueAsString(principal);
             respWriter.write(payload);
 
