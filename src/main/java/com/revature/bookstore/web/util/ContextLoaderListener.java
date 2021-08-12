@@ -10,6 +10,7 @@ import com.revature.bookstore.datasource.repos.UserRepository;
 import com.revature.bookstore.datasource.util.MongoClientFactory;
 import com.revature.bookstore.services.UserService;
 import com.revature.bookstore.util.PasswordUtils;
+import com.revature.bookstore.web.filters.CorsFilter;
 import com.revature.bookstore.web.servlets.AuthServlet;
 import com.revature.bookstore.web.servlets.UserServlet;
 import org.slf4j.LoggerFactory;
@@ -35,6 +36,8 @@ public class ContextLoaderListener implements ServletContextListener {
 
         UserServlet userServlet = new UserServlet(userService, mapper);
         AuthServlet authServlet = new AuthServlet(userService, mapper);
+
+        CorsFilter corsFilter = new CorsFilter();
 
         ServletContext servletContext = sce.getServletContext();
         servletContext.addServlet("UserServlet", userServlet).addMapping("/users/*");
