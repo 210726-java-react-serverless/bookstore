@@ -4,14 +4,13 @@ import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.joran.JoranConfigurator;
 import ch.qos.logback.core.joran.spi.JoranException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.mongodb.client.MongoClient;
 import com.revature.bookstore.datasource.repos.UserRepository;
 import com.revature.bookstore.datasource.util.MongoClientFactory;
 import com.revature.bookstore.services.UserService;
 import com.revature.bookstore.util.PasswordUtils;
-import com.revature.bookstore.web.filters.CorsFilter;
 import com.revature.bookstore.web.servlets.AuthServlet;
+import com.revature.bookstore.web.servlets.HealthCheckServlet;
 import com.revature.bookstore.web.servlets.UserServlet;
 import org.slf4j.LoggerFactory;
 
@@ -34,12 +33,14 @@ public class ContextLoaderListener implements ServletContextListener {
         UserRepository userRepo = new UserRepository(mongoClient);
         UserService userService = new UserService(userRepo, passwordUtils);
 
+        HealthCheckServlet healthCheckServlet = new HealthCheckServlet();
         UserServlet userServlet = new UserServlet(userService, mapper);
         AuthServlet authServlet = new AuthServlet(userService, mapper);
 
         ServletContext servletContext = sce.getServletContext();
         servletContext.addServlet("UserServlet", userServlet).addMapping("/users/*");
         servletContext.addServlet("AuthServlet", authServlet).addMapping("/auth");
+        servletContext.addServlet("HealthCheckServlet", healthCheckServlet).addMapping("/health");
 
         configureLogback(servletContext);
     }
