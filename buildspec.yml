@@ -6,14 +6,18 @@ phases:
       java: corretto8
   pre_build:
     commands:
-      - echo Nothing to do in the pre_build phase...
+      - aws s3 cp s3://bookstore-api-files/application.properties ./src/main/resources/application.properties
   build:
     commands:
       - echo Build started on `date`
       - mvn package
+      - mv target/*.war ./bookstore.war
   post_build:
     commands:
       - echo Build completed on `date`
+      - unzip bookstore.war -d artifact/
+      - mv artifact/WEB-INF WEB-INF
 artifacts:
   files:
-    - target/bookstore-1.0-SNAPSHOT.war
+    - WEB-INF/**/*
+  name: artifact
