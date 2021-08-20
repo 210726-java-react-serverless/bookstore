@@ -33,9 +33,9 @@ public class UserServlet extends HttpServlet {
 
     /**
      * Handles GET requests to "/users/*" and will determine if the request is a simple availability check
-     * (see {@link UserServlet#availabilityCheck}) or a resource retrieval. If the request is for resource
-     * retrieval, security checks will ensure that the requesting user is both authenticated and authorized
-     * to perform the action.
+     * (see {@link #availabilityCheck(HttpServletRequest, HttpServletResponse)}) or a resource retrieval.
+     * If the request is for resource retrieval, security checks will ensure that the requesting user is both
+     * authenticated and authorized to perform the action.
      *
      * @param req The incoming request from the client.
      * @param resp The outgoing response intended for the client.
