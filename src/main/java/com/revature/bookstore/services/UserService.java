@@ -87,6 +87,24 @@ public class UserService {
 
     }
 
+    public boolean isUsernameAvailable(String username) {
+
+        if (username == null || username.trim().equals("")) {
+            throw new InvalidRequestException("Invalid email value provided!");
+        }
+
+        return (userRepo.findUserByUsername(username) == null);
+    }
+
+    public boolean isEmailAvailable(String email) {
+
+        if (email == null || email.trim().equals("")) {
+            throw new InvalidRequestException("Invalid email value provided!");
+        }
+
+        return (userRepo.findUserByEmail(email) == null);
+    }
+
     public boolean isUserValid(AppUser user) {
         if (user == null) return false;
         if (user.getFirstName() == null || user.getFirstName().trim().equals("")) return false;
