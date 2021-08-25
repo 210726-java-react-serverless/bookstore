@@ -7,12 +7,12 @@ import com.revature.bookstore.util.exceptions.AuthenticationException;
 import com.revature.bookstore.web.dtos.Credentials;
 import com.revature.bookstore.web.dtos.ErrorResponse;
 import com.revature.bookstore.web.dtos.Principal;
+import com.revature.bookstore.web.util.security.TokenGenerator;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.io.PrintWriter;
 
@@ -20,10 +20,12 @@ public class AuthServlet extends HttpServlet {
 
     private final UserService userService;
     private final ObjectMapper mapper;
+    private final TokenGenerator tokenGenerator;
 
-    public AuthServlet(UserService userService, ObjectMapper mapper) {
+    public AuthServlet(UserService userService, ObjectMapper mapper, TokenGenerator tokenGenerator) {
         this.userService = userService;
         this.mapper = mapper;
+        this.tokenGenerator = tokenGenerator;
     }
 
     @Override
@@ -40,8 +42,8 @@ public class AuthServlet extends HttpServlet {
             String payload = mapper.writeValueAsString(principal);
             respWriter.write(payload);
 
-            HttpSession session = req.getSession();
-            session.setAttribute("auth-user", principal);
+            String token = tokenGenerator.createToken(principal);
+            resp.setHeader(tokenGenerator.getJwtConfig().getHeader(), token);
 
         } catch (AuthenticationException ae) {
             resp.setStatus(401); // server's fault

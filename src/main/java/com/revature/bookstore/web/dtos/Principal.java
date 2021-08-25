@@ -1,6 +1,7 @@
 package com.revature.bookstore.web.dtos;
 
 import com.revature.bookstore.datasource.documents.AppUser;
+import io.jsonwebtoken.Claims;
 
 import java.util.Objects;
 
@@ -16,6 +17,12 @@ public class Principal {
     public Principal(AppUser subject) {
         this.id = subject.getId();
         this.username = subject.getUsername();
+    }
+
+    public Principal(Claims jwtClaims) {
+        this.id = jwtClaims.getId();
+        this.username = jwtClaims.getSubject();
+//        this.role = jwtClaims.get("role", String.class);
     }
 
     public String getId() {
