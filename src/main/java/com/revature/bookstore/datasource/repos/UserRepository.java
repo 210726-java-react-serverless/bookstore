@@ -4,6 +4,7 @@ import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoCollection;
 
 import com.revature.bookstore.datasource.documents.AppUser;
+import com.revature.bookstore.datasource.util.MongoConnection;
 import com.revature.bookstore.util.exceptions.DataSourceException;
 
 import org.bson.Document;
@@ -11,17 +12,21 @@ import org.bson.types.ObjectId;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Repository
 public class UserRepository implements CrudRepository<AppUser> {
 
     private final Logger logger = LoggerFactory.getLogger(UserRepository.class);
     private final MongoCollection<AppUser> usersCollection;
 
-    public UserRepository(MongoClient mongoClient) {
-        this.usersCollection = mongoClient.getDatabase("bookstore").getCollection("users", AppUser.class);
+    @Autowired
+    public UserRepository(MongoConnection mongoConnection) {
+        this.usersCollection = mongoConnection.getMongoClient().getDatabase("bookstore").getCollection("users", AppUser.class);
     }
 
     public AppUser findUserByCredentials(String username, String encryptedPassword) {

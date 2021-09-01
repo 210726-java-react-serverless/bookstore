@@ -1,5 +1,8 @@
 package com.revature.bookstore.util;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
 import java.io.FileReader;
@@ -21,12 +24,11 @@ import java.util.Random;
  *
  * Date: 06 August 2021
  */
+@Component
 public class PasswordUtils {
 
     private String salt;
     private final Random random = new SecureRandom();
-
-
     public PasswordUtils() {
         Properties appProperties = new Properties();
         try {

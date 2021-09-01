@@ -9,6 +9,8 @@ import com.mongodb.client.MongoClients;
 import com.revature.bookstore.util.exceptions.DataSourceException;
 import org.bson.codecs.configuration.CodecRegistry;
 import org.bson.codecs.pojo.PojoCodecProvider;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -20,13 +22,16 @@ import static com.mongodb.MongoClientSettings.getDefaultCodecRegistry;
 import static org.bson.codecs.configuration.CodecRegistries.fromProviders;
 import static org.bson.codecs.configuration.CodecRegistries.fromRegistries;
 
-public class MongoClientFactory {
-
+@Component
+public class MongoConnection {
     private final MongoClient mongoClient;
-    private static final MongoClientFactory mongoClientFactory = new MongoClientFactory();
 
+    public MongoClient getMongoClient() {
+        return mongoClient;
+    }
 
-    private MongoClientFactory() {
+    @Autowired
+    public MongoConnection() {
 
         Properties appProperties = new Properties();
 
@@ -47,10 +52,10 @@ public class MongoClientFactory {
             CodecRegistry pojoCodecRegistry = fromRegistries(defaultCodecRegistry, fromProviders(pojoCodecProvider));
 
             MongoClientSettings settings = MongoClientSettings.builder()
-                                                              .applyToClusterSettings(builder -> builder.hosts(hosts))
-                                                              .credential(credentials)
-                                                              .codecRegistry(pojoCodecRegistry)
-                                                              .build();
+                    .applyToClusterSettings(builder -> builder.hosts(hosts))
+                    .credential(credentials)
+                    .codecRegistry(pojoCodecRegistry)
+                    .build();
             this.mongoClient = MongoClients.create(settings);
 
         } catch (FileNotFoundException fnfe) {
@@ -63,16 +68,5 @@ public class MongoClientFactory {
 
     }
 
-    public void cleanUp(){
-        mongoClient.close();
-    }
-
-    public static MongoClientFactory getInstance(){
-        return mongoClientFactory;
-    }
-
-    public MongoClient getConnection(){
-        return mongoClient;
-    }
 
 }
