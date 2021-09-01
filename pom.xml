@@ -13,6 +13,7 @@
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
         <jackson-version>2.12.4</jackson-version>
+        <spring-version>5.3.9</spring-version>
     </properties>
 
     <dependencies>
@@ -77,6 +78,12 @@
             <artifactId>mockito-core</artifactId>
             <version>3.11.2</version>
             <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-webmvc</artifactId>
+            <version>${spring-version}</version>
         </dependency>
 
     </dependencies>
