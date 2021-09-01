@@ -10,9 +10,5 @@
         <param-name>logback-config</param-name>
         <param-value>WEB-INF/classes/logback.xml</param-value>
     </context-param>
-    
-    <listener>
-        <listener-class>com.revature.bookstore.web.util.ContextLoaderListener</listener-class>
-    </listener>
 
 </web-app>

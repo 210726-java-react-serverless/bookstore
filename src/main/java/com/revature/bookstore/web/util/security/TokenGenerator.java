@@ -3,13 +3,17 @@ package com.revature.bookstore.web.util.security;
 import com.revature.bookstore.web.dtos.Principal;
 import io.jsonwebtoken.JwtBuilder;
 import io.jsonwebtoken.Jwts;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.util.Date;
 
+@Component
 public class TokenGenerator {
 
     private final JwtConfig jwtConfig;
 
+    @Autowired
     public TokenGenerator(JwtConfig jwtConfig) {
         this.jwtConfig = jwtConfig;
     }
@@ -29,6 +33,10 @@ public class TokenGenerator {
 
         return jwtConfig.getPrefix() + tokenBuilder.compact();
 
+    }
+
+    public String getJwtHeader() {
+        return jwtConfig.getHeader();
     }
 
     public JwtConfig getJwtConfig() {

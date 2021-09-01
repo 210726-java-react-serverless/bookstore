@@ -8,18 +8,22 @@ import com.revature.bookstore.util.exceptions.InvalidRequestException;
 import com.revature.bookstore.util.exceptions.ResourceNotFoundException;
 import com.revature.bookstore.util.exceptions.ResourcePersistenceException;
 import com.revature.bookstore.web.dtos.AppUserDTO;
+import com.revature.bookstore.web.dtos.AvailabilityStatus;
 import com.revature.bookstore.web.dtos.Principal;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Service
 public class UserService {
 
     private final UserRepository userRepo;
     private final PasswordUtils passwordUtils;
 
+    @Autowired
     public UserService(UserRepository userRepo, PasswordUtils passwordUtils) {
         this.userRepo = userRepo;
         this.passwordUtils = passwordUtils;
@@ -85,6 +89,16 @@ public class UserService {
 
         return new Principal(authUser);
 
+    }
+
+    public AvailabilityStatus determineAvailability(String field, String value) {
+        if (field.equalsIgnoreCase("username")) {
+            return new AvailabilityStatus(isUsernameAvailable(value));
+        } else if (field.equalsIgnoreCase("email")) {
+            return new AvailabilityStatus(isEmailAvailable(value));
+        } else {
+            throw new InvalidRequestException("No availability status for provided field: " + field);
+        }
     }
 
     public boolean isUsernameAvailable(String username) {

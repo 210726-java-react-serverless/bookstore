@@ -11,6 +11,4 @@
         <appender-ref ref="STDOUT" />
     </root>
 
-    <shutdownHook/>
-
 </configuration>

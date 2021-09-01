@@ -9,12 +9,13 @@ import com.mongodb.client.MongoClients;
 import com.revature.bookstore.util.exceptions.DataSourceException;
 import org.bson.codecs.configuration.CodecRegistry;
 import org.bson.codecs.pojo.PojoCodecProvider;
+import org.springframework.beans.factory.annotation.Value;
 
-import java.io.FileNotFoundException;
-import java.io.FileReader;
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.Properties;
 
 import static com.mongodb.MongoClientSettings.getDefaultCodecRegistry;
 import static org.bson.codecs.configuration.CodecRegistries.fromProviders;
@@ -22,24 +23,32 @@ import static org.bson.codecs.configuration.CodecRegistries.fromRegistries;
 
 public class MongoClientFactory {
 
-    private final MongoClient mongoClient;
-    private static final MongoClientFactory mongoClientFactory = new MongoClientFactory();
+    private MongoClient mongoClient;
 
+    @Value("${db.ipAddress}")
+    private String ipAddress;
 
-    private MongoClientFactory() {
+    @Value("${db.port}")
+    private int port;
 
-        Properties appProperties = new Properties();
+    @Value("${db.dbName}")
+    private String dbName;
+
+    @Value("${db.username}")
+    private String username;
+
+    @Value("#{'${db.password}'.toCharArray()}")
+    private char[] password;
+
+    @PostConstruct
+    public void factoryConfig() {
+        System.out.printf("DEBUG: DB IP Address - %s\n", ipAddress);
+        System.out.printf("DEBUG: DB Port Number - %d\n", port);
+        System.out.printf("DEBUG: DB Name - %s\n", dbName);
+        System.out.printf("DEBUG: DB Username - %s\n", username);
+        System.out.printf("DEBUG: DB Password - %s\n", Arrays.toString(password));
 
         try {
-            ClassLoader loader = Thread.currentThread().getContextClassLoader();
-            appProperties.load(loader.getResourceAsStream("application.properties"));
-
-            String ipAddress = appProperties.getProperty("ipAddress");
-            int port = Integer.parseInt(appProperties.getProperty("port"));
-            String dbName = appProperties.getProperty("dbName");
-            String username = appProperties.getProperty("username");
-            char[] password = appProperties.getProperty("password").toCharArray();
-
             List<ServerAddress> hosts = Collections.singletonList(new ServerAddress(ipAddress, port));
             MongoCredential credentials = MongoCredential.createScramSha1Credential(username, dbName, password);
             CodecRegistry defaultCodecRegistry = getDefaultCodecRegistry();
@@ -54,22 +63,15 @@ public class MongoClientFactory {
 
             this.mongoClient = MongoClients.create(settings);
 
-        } catch (FileNotFoundException fnfe) {
-            fnfe.printStackTrace(); // TODO log this to a file
-            throw new DataSourceException("Unable to load database properties file.", fnfe);
         } catch(Exception e){
-            e.printStackTrace(); // TODO log this to a file
             throw new DataSourceException("An unexpected exception occurred.", e);
         }
 
     }
 
+    @PreDestroy
     public void cleanUp(){
         mongoClient.close();
-    }
-
-    public static MongoClientFactory getInstance(){
-        return mongoClientFactory;
     }
 
     public MongoClient getConnection(){
