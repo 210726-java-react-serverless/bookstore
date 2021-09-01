@@ -11,15 +11,19 @@ import org.bson.types.ObjectId;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Repository
 public class UserRepository implements CrudRepository<AppUser> {
 
     private final Logger logger = LoggerFactory.getLogger(UserRepository.class);
     private final MongoCollection<AppUser> usersCollection;
 
+    @Autowired
     public UserRepository(MongoClient mongoClient) {
         this.usersCollection = mongoClient.getDatabase("bookstore").getCollection("users", AppUser.class);
     }
