@@ -28,7 +28,7 @@ public class MongoClientFactory {
     @Value("${db.ipAddress}")
     private String ipAddress;
 
-    @Value("#{T(java.lang.Integer).parseInt('${db.port}')}")
+    @Value("${db.port:27017}")
     private int port;
 
     @Value("${db.dbName}")
