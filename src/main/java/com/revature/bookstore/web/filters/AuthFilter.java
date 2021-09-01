@@ -1,6 +1,6 @@
 package com.revature.bookstore.web.filters;
 
-import com.revature.bookstore.web.dtos.Principal;
+import com.revature.bookstore.dtos.Principal;
 import com.revature.bookstore.web.util.security.JwtConfig;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;

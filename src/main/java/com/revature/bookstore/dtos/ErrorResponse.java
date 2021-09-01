@@ -1,4 +1,4 @@
-package com.revature.bookstore.web.dtos;
+package com.revature.bookstore.dtos;
 
 import java.time.LocalDateTime;
 import java.util.Objects;

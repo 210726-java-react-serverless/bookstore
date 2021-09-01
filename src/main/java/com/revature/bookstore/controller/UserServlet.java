@@ -1,31 +1,32 @@
-package com.revature.bookstore.web.servlets;
+package com.revature.bookstore.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.exc.MismatchedInputException;
 
 import com.revature.bookstore.datasource.documents.AppUser;
 import com.revature.bookstore.services.UserService;
-import com.revature.bookstore.util.exceptions.InvalidRequestException;
-import com.revature.bookstore.util.exceptions.ResourceNotFoundException;
-import com.revature.bookstore.util.exceptions.ResourcePersistenceException;
-import com.revature.bookstore.web.dtos.AppUserDTO;
-import com.revature.bookstore.web.dtos.ErrorResponse;
-import com.revature.bookstore.web.dtos.Principal;
+import com.revature.bookstore.dtos.AppUserDTO;
+import com.revature.bookstore.dtos.ErrorResponse;
+import com.revature.bookstore.dtos.Principal;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.*;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.List;
 
+@RestController
+@RequestMapping("/auth")
 public class UserServlet extends HttpServlet {
 
     private final Logger logger = LoggerFactory.getLogger(UserServlet.class);
     private final UserService userService;
     private final ObjectMapper mapper;
 
+    @Autowired
     public UserServlet(UserService userService, ObjectMapper mapper) {
         this.userService = userService;
         this.mapper = mapper;
@@ -41,8 +42,9 @@ public class UserServlet extends HttpServlet {
      * @param resp The outgoing response intended for the client.
      * @throws IOException Occurs if there are issues with writing to the response body
      */
-    @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+
+    @GetMapping
+    public @ResponseBody String getUsers(HttpServletRequest req, HttpServletResponse resp) throws IOException {
 
         PrintWriter respWriter = resp.getWriter();
         resp.setContentType("application/json");
@@ -98,8 +100,6 @@ public class UserServlet extends HttpServlet {
 
         String userIdParam = req.getParameter("id");
 
-        try {
-
             if (userIdParam == null) {
                 List<AppUserDTO> users = userService.findAll();
                 respWriter.write(mapper.writeValueAsString(users));
@@ -107,14 +107,6 @@ public class UserServlet extends HttpServlet {
                 AppUserDTO user = userService.findUserById(userIdParam);
                 respWriter.write(mapper.writeValueAsString(user));
             }
-
-        } catch (ResourceNotFoundException rnfe) {
-            logger.info(rnfe.getMessage());
-            writeErrorResponse(rnfe.getMessage(), 404, resp);
-        } catch (Exception e) {
-            logger.error(e.getMessage(), e);
-            writeErrorResponse("An unexpected error occurred on the server.", 500, resp);
-        }
 
         //------------------------------------------------------------------------------------------
 
@@ -130,31 +122,19 @@ public class UserServlet extends HttpServlet {
      * @param resp The outgoing response intended for the client.
      * @throws IOException Occurs if there are issues with writing to the response body
      */
-    @Override
+
+    @PostMapping(produces = "application/json", consumes = "application/json")
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
 
         System.out.println(req.getAttribute("filtered"));
         PrintWriter respWriter = resp.getWriter();
         resp.setContentType("application/json");
 
-        try {
-
             AppUser newUser = mapper.readValue(req.getInputStream(), AppUser.class);
             Principal principal = new Principal(userService.register(newUser));
             String payload = mapper.writeValueAsString(principal);
             respWriter.write(payload);
             resp.setStatus(201);
-
-        } catch (InvalidRequestException | MismatchedInputException e) {
-            logger.info(e.getMessage());
-            writeErrorResponse(e.getMessage(), 400, resp);
-        } catch (ResourcePersistenceException rpe) {
-            logger.info(rpe.getMessage());
-            writeErrorResponse(rpe.getMessage(), 409, resp);
-        } catch (Exception e) {
-            logger.error(e.getMessage(), e);
-            writeErrorResponse("An unexpected error occurred on the server.", 500, resp);
-        }
 
 
     }
@@ -187,7 +167,6 @@ public class UserServlet extends HttpServlet {
         String emailParam = req.getParameter("email");
         boolean isAvailable;
 
-        try {
 
             if (usernameParam != null) {
                 isAvailable = userService.isUsernameAvailable(usernameParam);
@@ -206,13 +185,7 @@ public class UserServlet extends HttpServlet {
                 resp.getWriter().write("{\"isAvailable\": \"false\"}");
             }
 
-        } catch (InvalidRequestException ire) {
-            logger.info(ire.getMessage());
-            writeErrorResponse(ire.getMessage(), 400, resp);
-        } catch (Exception e) {
-            logger.error(e.getMessage(), e);
-            writeErrorResponse("An unexpected error occurred on the server.", 500, resp);
-        }
+
 
     }
 

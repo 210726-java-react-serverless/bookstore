@@ -7,14 +7,15 @@ import com.revature.bookstore.util.exceptions.AuthenticationException;
 import com.revature.bookstore.util.exceptions.InvalidRequestException;
 import com.revature.bookstore.util.exceptions.ResourceNotFoundException;
 import com.revature.bookstore.util.exceptions.ResourcePersistenceException;
-import com.revature.bookstore.web.dtos.AppUserDTO;
-import com.revature.bookstore.web.dtos.Principal;
+import com.revature.bookstore.dtos.AppUserDTO;
+import com.revature.bookstore.dtos.Principal;
+import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Service
 public class UserService {
 
     private final UserRepository userRepo;

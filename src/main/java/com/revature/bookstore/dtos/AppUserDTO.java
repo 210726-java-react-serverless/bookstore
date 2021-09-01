@@ -1,9 +1,8 @@
-package com.revature.bookstore.web.dtos;
+package com.revature.bookstore.dtos;
 
 import com.revature.bookstore.datasource.documents.Address;
 import com.revature.bookstore.datasource.documents.AppUser;
 
-import java.time.LocalDateTime;
 import java.util.Objects;
 
 public class AppUserDTO {

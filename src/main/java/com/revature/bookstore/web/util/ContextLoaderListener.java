@@ -10,9 +10,7 @@ import com.revature.bookstore.datasource.util.MongoClientFactory;
 import com.revature.bookstore.services.UserService;
 import com.revature.bookstore.util.PasswordUtils;
 import com.revature.bookstore.web.filters.AuthFilter;
-import com.revature.bookstore.web.servlets.AuthServlet;
-import com.revature.bookstore.web.servlets.HealthCheckServlet;
-import com.revature.bookstore.web.servlets.UserServlet;
+import com.revature.bookstore.controller.UserServlet;
 import com.revature.bookstore.web.util.security.JwtConfig;
 import com.revature.bookstore.web.util.security.TokenGenerator;
 import org.slf4j.LoggerFactory;
@@ -21,7 +19,6 @@ import javax.servlet.DispatcherType;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
-import javax.xml.ws.Dispatch;
 import java.io.File;
 import java.util.EnumSet;
 
@@ -43,15 +40,13 @@ public class ContextLoaderListener implements ServletContextListener {
 
         AuthFilter authFilter = new AuthFilter(jwtConfig);
 
-        HealthCheckServlet healthCheckServlet = new HealthCheckServlet();
         UserServlet userServlet = new UserServlet(userService, mapper);
-        AuthServlet authServlet = new AuthServlet(userService, mapper, tokenGenerator);
+
 
         ServletContext servletContext = sce.getServletContext();
         servletContext.addFilter("AuthFilter", authFilter).addMappingForUrlPatterns(EnumSet.of(DispatcherType.REQUEST), true, "/*");
         servletContext.addServlet("UserServlet", userServlet).addMapping("/users/*");
-        servletContext.addServlet("AuthServlet", authServlet).addMapping("/auth");
-        servletContext.addServlet("HealthCheckServlet", healthCheckServlet).addMapping("/health");
+
 
         configureLogback(servletContext);
     }

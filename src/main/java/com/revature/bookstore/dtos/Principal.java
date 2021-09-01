@@ -1,4 +1,4 @@
-package com.revature.bookstore.web.dtos;
+package com.revature.bookstore.dtos;
 
 import com.revature.bookstore.datasource.documents.AppUser;
 import io.jsonwebtoken.Claims;

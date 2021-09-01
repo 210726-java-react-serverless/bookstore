@@ -1,6 +1,6 @@
 package com.revature.bookstore.web.util.security;
 
-import com.revature.bookstore.web.dtos.Principal;
+import com.revature.bookstore.dtos.Principal;
 import io.jsonwebtoken.JwtBuilder;
 import io.jsonwebtoken.Jwts;
 
