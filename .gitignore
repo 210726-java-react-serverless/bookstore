@@ -31,3 +31,4 @@ target/
 
 # Properties files
 *.properties
+application.yml

@@ -1,15 +1,17 @@
 package com.revature.bookstore.config;
 
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.PropertySource;
 
-@Configuration
-@ComponentScan("com.revature.bookstore")
+@SpringBootApplication
 @PropertySource("classpath:application.properties")
 @Import({AspectConfig.class, WebConfig.class, DataConfig.class})
 public class AppConfig {
 
+    public static void main(String[] args) {
+        SpringApplication.run(AppConfig.class);
+    }
 
 }
