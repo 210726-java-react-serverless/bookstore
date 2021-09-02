@@ -1,8 +1,6 @@
 package com.revature.bookstore.web.util;
 
-import com.revature.bookstore.util.exceptions.InvalidRequestException;
-import com.revature.bookstore.util.exceptions.ResourceNotFoundException;
-import com.revature.bookstore.util.exceptions.ResourcePersistenceException;
+import com.revature.bookstore.util.exceptions.*;
 import com.revature.bookstore.web.dtos.ErrorResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MissingServletRequestParameterException;
@@ -12,6 +10,18 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @RestControllerAdvice
 public class ErrorResponseAspect {
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    public ErrorResponse handleAuthenticationException(AuthenticationException e) {
+        return new ErrorResponse(401, e.getMessage());
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public ErrorResponse handleAuthorizationException(AuthorizationException e) {
+        return new ErrorResponse(403, e.getMessage());
+    }
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)

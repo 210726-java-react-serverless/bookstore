@@ -5,6 +5,7 @@ import com.revature.bookstore.services.UserService;
 import com.revature.bookstore.web.dtos.AppUserDTO;
 import com.revature.bookstore.web.dtos.AvailabilityStatus;
 import com.revature.bookstore.web.dtos.Principal;
+import com.revature.bookstore.web.util.security.Secured;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,6 +21,7 @@ public class UserController {
         this.userService = userService;
     }
 
+    @Secured(allowedUsers = {"wsingleton"})
     @GetMapping(produces = "application/json")
     public List<AppUserDTO> getAllUsers() {
         return userService.findAll();
