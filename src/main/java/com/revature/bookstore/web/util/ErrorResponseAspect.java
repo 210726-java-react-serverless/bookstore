@@ -3,10 +3,13 @@ package com.revature.bookstore.web.util;
 import com.revature.bookstore.util.exceptions.*;
 import com.revature.bookstore.web.dtos.ErrorResponse;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+
+import java.util.Objects;
 
 @RestControllerAdvice
 public class ErrorResponseAspect {
@@ -29,9 +32,17 @@ public class ErrorResponseAspect {
         return new ErrorResponse(404, e.getMessage());
     }
 
-    @ExceptionHandler({InvalidRequestException.class, MissingServletRequestParameterException.class})
+    @ExceptionHandler({
+            InvalidRequestException.class,
+            MissingServletRequestParameterException.class,
+            MethodArgumentNotValidException.class
+    })
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleInvalidRequestException(Exception e) {
+        if (e instanceof MethodArgumentNotValidException) {
+            String defaultMessage = Objects.requireNonNull(((MethodArgumentNotValidException) e).getBindingResult().getFieldError()).getDefaultMessage();
+            return new ErrorResponse(400, defaultMessage);
+        }
         return new ErrorResponse(400, e.getMessage());
     }
 

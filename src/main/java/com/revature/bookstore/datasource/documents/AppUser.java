@@ -1,15 +1,32 @@
 package com.revature.bookstore.datasource.documents;
 
+import org.hibernate.validator.constraints.Length;
+import org.springframework.data.mongodb.core.mapping.Document;
+
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Pattern;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
+@Document(collection = "users")
 public class AppUser {
 
     private String id;
+
+    @NotEmpty
     private String firstName;
+
+    @NotEmpty
     private String lastName;
+
+    @Email
     private String email;
+
+    @Length(min = 5, max = 15)
     private String username;
+
+    @Pattern(regexp = "^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{8,}$")
     private String password;
     private Address address;
     private LocalDateTime registrationDateTime;

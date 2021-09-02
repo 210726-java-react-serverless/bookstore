@@ -5,14 +5,10 @@ import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
-import java.io.FileReader;
 import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
 import java.security.spec.InvalidKeySpecException;
 import java.util.Arrays;
 import java.util.Base64;
-import java.util.Properties;
-import java.util.Random;
 
 /**
  * The PasswordUtils class provides methods to generate encrypted passwords from plaintext, and to compare plaintext
@@ -27,7 +23,7 @@ import java.util.Random;
 @Component
 public class PasswordUtils {
 
-    @Value("${salt}")
+    @Value("${encrypt.salt}")
     private String salt;
 
     /**

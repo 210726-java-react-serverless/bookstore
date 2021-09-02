@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
 
 @RestController
 @RequestMapping("/auth")
@@ -26,7 +27,7 @@ public class AuthController {
     }
 
     @PostMapping(produces = "application/json", consumes = "application/json")
-    public Principal authenticate(@RequestBody Credentials credentials, HttpServletResponse resp) {
+    public Principal authenticate(@RequestBody @Valid Credentials credentials, HttpServletResponse resp) {
         Principal principal = userService.login(credentials.getUsername(), credentials.getPassword());
         resp.setHeader(tokenGenerator.getJwtHeader(), tokenGenerator.createToken(principal));
         return principal;

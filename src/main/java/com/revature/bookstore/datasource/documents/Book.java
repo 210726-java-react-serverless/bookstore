@@ -1,9 +1,12 @@
 package com.revature.bookstore.datasource.documents;
 
+import org.springframework.data.mongodb.core.mapping.Document;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+@Document(collection = "books")
 public class Book {
 
     private String id;

@@ -1,15 +1,15 @@
-package com.revature.bookstore.config;
+package com.revature.bookstore;
 
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
-import org.springframework.context.annotation.PropertySource;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
 
-@Configuration
-@ComponentScan("com.revature.bookstore")
-@PropertySource("classpath:application.properties")
-@Import({AspectConfig.class, WebConfig.class, DataConfig.class})
-public class AppConfig {
+@SpringBootApplication // implies @Configuration, @ComponentScan, @EnableAutoConfiguration
+@EnableAspectJAutoProxy(proxyTargetClass = true)
+public class AppDriver {
 
+    public static void main(String[] args) {
+        SpringApplication.run(AppDriver.class, args);
+    }
 
 }

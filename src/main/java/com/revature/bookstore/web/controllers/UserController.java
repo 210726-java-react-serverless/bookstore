@@ -9,6 +9,7 @@ import com.revature.bookstore.web.util.security.Secured;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -39,7 +40,7 @@ public class UserController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Principal registerNewUser(@RequestBody AppUser newUser) {
+    public Principal registerNewUser(@RequestBody @Valid AppUser newUser) {
         return new Principal(userService.register(newUser));
     }
 
