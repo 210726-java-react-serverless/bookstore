@@ -1,8 +1,11 @@
 package com.revature.bookstore.datasource.documents;
 
+import org.springframework.data.mongodb.core.mapping.Document;
+
 import java.time.LocalDateTime;
 import java.util.Objects;
 
+@Document(collection = "users")
 public class AppUser {
 
     private String id;

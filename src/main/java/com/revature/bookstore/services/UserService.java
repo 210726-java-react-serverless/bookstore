@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 @Service
 public class UserService {
@@ -30,10 +31,9 @@ public class UserService {
     }
 
     public List<AppUserDTO> findAll() {
-        return userRepo.findAll()
-                       .stream()
-                       .map(AppUserDTO::new)
-                       .collect(Collectors.toList());
+        return StreamSupport.stream(userRepo.findAll().spliterator(), false)
+                            .map(AppUserDTO::new)
+                            .collect(Collectors.toList());
     }
 
     public AppUserDTO findUserById(String id) {
@@ -42,13 +42,9 @@ public class UserService {
             throw new InvalidRequestException("Invalid id provided");
         }
 
-        AppUser user = userRepo.findById(id);
-
-        if (user == null) {
-            throw new ResourceNotFoundException();
-        }
-
-        return new AppUserDTO(user);
+        return userRepo.findById(id)
+                       .map(AppUserDTO::new)
+                       .orElseThrow(ResourceNotFoundException::new);
 
     }
 
@@ -58,12 +54,12 @@ public class UserService {
             throw new InvalidRequestException("Invalid user data provided!");
         }
 
-        if (userRepo.findUserByUsername(newUser.getUsername()) != null) {
+        if (userRepo.findAppUserByUsername(newUser.getUsername()) != null) {
             throw new ResourcePersistenceException("Provided username is already taken!");
         }
 
-        if (userRepo.findUserByEmail(newUser.getEmail()) != null) {
-            throw new ResourcePersistenceException("Provided username is already taken!");
+        if (userRepo.findAppUserByEmail(newUser.getEmail()) != null) {
+            throw new ResourcePersistenceException("Provided email is already taken!");
         }
 
         newUser.setRegistrationDateTime(LocalDateTime.now());
@@ -81,7 +77,7 @@ public class UserService {
         }
 
         String encryptedPassword = passwordUtils.generateSecurePassword(password);
-        AppUser authUser = userRepo.findUserByCredentials(username, encryptedPassword);
+        AppUser authUser = userRepo.findAppUserByUsernameAndPassword(username, encryptedPassword);
 
         if (authUser == null) {
             throw new AuthenticationException("Invalid credentials provided!");
@@ -107,7 +103,7 @@ public class UserService {
             throw new InvalidRequestException("Invalid email value provided!");
         }
 
-        return (userRepo.findUserByUsername(username) == null);
+        return (userRepo.findAppUserByUsername(username) == null);
     }
 
     public boolean isEmailAvailable(String email) {
@@ -116,7 +112,7 @@ public class UserService {
             throw new InvalidRequestException("Invalid email value provided!");
         }
 
-        return (userRepo.findUserByEmail(email) == null);
+        return (userRepo.findAppUserByEmail(email) == null);
     }
 
     public boolean isUserValid(AppUser user) {

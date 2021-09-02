@@ -6,8 +6,12 @@ import com.revature.bookstore.util.PasswordUtils;
 import com.revature.bookstore.util.exceptions.InvalidRequestException;
 import com.revature.bookstore.util.exceptions.ResourcePersistenceException;
 
-import org.junit.*;
-import static org.junit.Assert.*;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
@@ -18,14 +22,14 @@ public class UserServiceTestSuite {
     private PasswordUtils mockPasswordUtils;
     private UserRepository mockUserRepo;
 
-    @Before
+    @BeforeEach
     public void beforeEachTest() {
         mockPasswordUtils = mock(PasswordUtils.class);
         mockUserRepo = mock(UserRepository.class);
         sut = new UserService(mockUserRepo, mockPasswordUtils);
     }
 
-    @After
+    @AfterEach
     public void afterEachTest() {
         sut = null;
     }
@@ -40,7 +44,7 @@ public class UserServiceTestSuite {
         boolean actualResult = sut.isUserValid(validUser);
 
         // Assert
-        Assert.assertTrue("Expected user to be considered valid!", actualResult);
+        Assertions.assertTrue(actualResult);
 
     }
 
@@ -58,9 +62,9 @@ public class UserServiceTestSuite {
         boolean actualResult3 = sut.isUserValid(invalidUser3);
 
         // Assert
-        Assert.assertFalse("User first name cannot be null!", actualResult1);
-        Assert.assertFalse("User first name cannot be an empty string!", actualResult2);
-        Assert.assertFalse("User first name cannot be only whitespace!", actualResult3);
+        Assertions.assertFalse(actualResult1);
+        Assertions.assertFalse(actualResult2);
+        Assertions.assertFalse(actualResult3);
 
     }
 
@@ -78,44 +82,61 @@ public class UserServiceTestSuite {
 
         // Assert
         assertEquals(expectedResult, actualResult);
-        assertNotEquals(expectedResult.getPassword(), actualResult.getPassword());
         verify(mockUserRepo, times(1)).save(any());
         verify(mockPasswordUtils, times(1)).generateSecurePassword(anyString());
 
     }
 
-    @Test(expected = InvalidRequestException.class)
+    @Test
     public void register_throwsException_whenGivenInvalidUser() {
 
         // Arrange
         AppUser invalidUser = new AppUser(null, "", "", "", "");
 
         // Act
-        try {
-            sut.register(invalidUser);
-        } finally {
-            // Assert
-            verify(mockUserRepo, times(0)).save(any());
-        }
+        InvalidRequestException e = assertThrows(InvalidRequestException.class, () -> sut.register(invalidUser));
+
+        // Assert
+        assertEquals("Invalid user data provided!", e.getMessage());
+        verify(mockUserRepo, times(0)).save(any());
 
     }
 
-    @Test(expected = ResourcePersistenceException.class)
+    @Test
     public void register_throwsException_whenGivenUserWithDuplicateUsername() {
 
         // Arrange
         AppUser existingUser = new AppUser("original", "original", "original", "duplicate", "original");
         AppUser duplicate = new AppUser("first", "last", "email", "duplicate", "password");
-        when(mockUserRepo.findUserByUsername(duplicate.getUsername())).thenReturn(existingUser);
+        when(mockUserRepo.findAppUserByUsername(duplicate.getUsername())).thenReturn(existingUser);
 
         // Act
-        try {
-            sut.register(duplicate);
-        } finally {
-            // Assert
-            verify(mockUserRepo, times(1)).findUserByUsername(duplicate.getUsername());
-            verify(mockUserRepo, times(0)).save(duplicate);
-        }
+        ResourcePersistenceException e = assertThrows(ResourcePersistenceException.class, () -> sut.register(duplicate));
+
+        // Assert
+        assertEquals("Provided username is already taken!", e.getMessage());
+        verify(mockUserRepo, times(1)).findAppUserByUsername(duplicate.getUsername());
+        verify(mockUserRepo, times(0)).save(duplicate);
+
+
+    }
+
+    @Test
+    public void register_throwsException_whenGivenUserWithDuplicateEmail() {
+
+        // Arrange
+        AppUser existingUser = new AppUser("original", "duplicate", "original", "original", "original");
+        AppUser duplicate = new AppUser("first", "last", "duplicate", "username", "password");
+        when(mockUserRepo.findAppUserByEmail(duplicate.getEmail())).thenReturn(existingUser);
+
+        // Act
+        ResourcePersistenceException e = assertThrows(ResourcePersistenceException.class, () -> sut.register(duplicate));
+
+        // Assert
+        assertEquals("Provided email is already taken!", e.getMessage());
+        verify(mockUserRepo, times(1)).findAppUserByEmail(duplicate.getEmail());
+        verify(mockUserRepo, times(0)).save(duplicate);
+
 
     }
 

@@ -1,10 +1,13 @@
 package com.revature.bookstore.datasource.documents;
 
+import org.springframework.data.mongodb.core.mapping.Document;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
+@Document
 public class UserWishlist {
 
     private String id;

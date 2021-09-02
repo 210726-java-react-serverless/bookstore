@@ -27,7 +27,7 @@ import java.util.Random;
 @Component
 public class PasswordUtils {
 
-    @Value("${salt}")
+    @Value("${encrypt.salt}")
     private String salt;
 
     /**
