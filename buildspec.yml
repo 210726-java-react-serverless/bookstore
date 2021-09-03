@@ -11,13 +11,7 @@ phases:
     commands:
       - echo Build started on `date`
       - mvn package
-      - mv target/*.war ./bookstore.war
-  post_build:
-    commands:
-      - echo Build completed on `date`
-      - unzip bookstore.war -d artifact/
-      - mv artifact/WEB-INF WEB-INF
+
 artifacts:
   files:
-    - WEB-INF/**/*
-  name: artifact
+    - target/*.jar
