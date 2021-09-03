@@ -1,0 +1,46 @@
+server:
+  port: 5000 # Port 5000 because AWS Elastic Beanstalk expects for JAR packaged Java apps to listen on this port.
+  servlet:
+    context-path: /bookstore
+
+spring:
+  application:
+    name: bookstore-api
+  data:
+    mongodb:
+      host: 18.204.247.207
+      port: 27017
+      database: bookstore
+      username: bookstore-app
+      password: revature
+
+encrypt:
+  salt: N77e3rlDnE6li0K6ftNZJLHUgAaTK0
+
+jwt:
+  header: Authorization
+  prefix: Bearer
+  secret: Revature
+  expiration: 86400000
+
+# DO NOT EXPOSE ALL ENDPOINTS FOR THE APP WHEN RUNNING IN PRODUCTION!
+# By default, only /health and /info are exposed
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+
+#db.ipAddress=18.204.247.207
+#db.port=27017
+#db.dbName=bookstore
+#db.username=bookstore-app
+#db.password=revature
+#
+#encrypt.salt=N77e3rlDnE6li0K6ftNZJLHUgAaTK0
+#
+#jwt.header=Authorization
+#jwt.prefix=Bearer
+#jwt.secret=Revature
+#
+#jwt.expiration=86400000
