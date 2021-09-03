@@ -3,6 +3,7 @@ package com.revature.bookstore.web.util.security;
 import com.revature.bookstore.util.exceptions.AuthenticationException;
 import com.revature.bookstore.util.exceptions.AuthorizationException;
 import com.revature.bookstore.web.dtos.Principal;
+import com.revature.bookstore.web.intercom.AuthServiceClient;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -29,11 +30,11 @@ public class SecurityAspect {
 
     private final Logger logger = LoggerFactory.getLogger(SecurityAspect.class);
 
-    private final JwtConfig jwtConfig;
+    private AuthServiceClient authClient;
 
     @Autowired
-    public SecurityAspect(JwtConfig jwtConfig) {
-        this.jwtConfig = jwtConfig;
+    public SecurityAspect(AuthServiceClient authClient) {
+        this.authClient = authClient;
     }
 
     @Around("@annotation(com.revature.bookstore.web.util.security.Secured)")
@@ -45,42 +46,17 @@ public class SecurityAspect {
 
         HttpServletRequest req = ((ServletRequestAttributes) Objects.requireNonNull(RequestContextHolder.getRequestAttributes())).getRequest();
 
-        Principal principal = parseToken(req).orElseThrow(() -> new AuthenticationException("Request originates from an unauthenticated source."));
+        String token = req.getHeader("Authorization");
 
-        if (!allowedUsers.contains(principal.getUsername())) {
-            throw new AuthorizationException("A forbidden request was made by: " + principal.getUsername());
+        System.out.println(token);
+
+        String authority = authClient.getTokenAuthorities(token);
+
+        if (!allowedUsers.contains(authority)) {
+            throw new AuthorizationException("A forbidden request was made");
         }
 
         return pjp.proceed();
-
-    }
-
-    public Optional<Principal> parseToken(HttpServletRequest req) {
-
-        try {
-
-            String header = req.getHeader(jwtConfig.getHeader());
-
-            System.out.println("Header value: " + header);
-
-            if (header == null || !header.startsWith(jwtConfig.getPrefix())) {
-                logger.warn("Request originates from an unauthenticated source.");
-                return Optional.empty();
-            }
-
-            String token = header.replaceAll(jwtConfig.getPrefix(), "");
-
-            Claims jwtClaims = Jwts.parser()
-                                   .setSigningKey(jwtConfig.getSigningKey())
-                                   .parseClaimsJws(token)
-                                   .getBody();
-
-            return Optional.of(new Principal(jwtClaims));
-
-        } catch (Exception e) {
-            logger.error(e.getMessage(), e);
-            return Optional.empty();
-        }
 
     }
 

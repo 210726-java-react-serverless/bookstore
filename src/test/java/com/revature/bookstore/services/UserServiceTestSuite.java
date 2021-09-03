@@ -6,6 +6,7 @@ import com.revature.bookstore.util.PasswordUtils;
 import com.revature.bookstore.util.exceptions.InvalidRequestException;
 import com.revature.bookstore.util.exceptions.ResourcePersistenceException;
 
+import com.revature.bookstore.web.intercom.AuthServiceClient;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -20,12 +21,14 @@ public class UserServiceTestSuite {
 
     private PasswordUtils mockPasswordUtils;
     private UserRepository mockUserRepo;
+    private AuthServiceClient mockAuthClient;
 
     @BeforeEach
     public void beforeEachTest() {
         mockPasswordUtils = mock(PasswordUtils.class);
         mockUserRepo = mock(UserRepository.class);
-        sut = new UserService(mockUserRepo, mockPasswordUtils);
+        mockAuthClient = mock(AuthServiceClient.class);
+        sut = new UserService(mockUserRepo, mockPasswordUtils, mockAuthClient);
     }
 
     @AfterEach

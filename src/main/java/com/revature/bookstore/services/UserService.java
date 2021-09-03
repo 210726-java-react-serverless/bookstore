@@ -10,6 +10,7 @@ import com.revature.bookstore.util.exceptions.ResourcePersistenceException;
 import com.revature.bookstore.web.dtos.AppUserDTO;
 import com.revature.bookstore.web.dtos.AvailabilityStatus;
 import com.revature.bookstore.web.dtos.Principal;
+import com.revature.bookstore.web.intercom.AuthServiceClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -22,11 +23,13 @@ public class UserService {
 
     private final UserRepository userRepo;
     private final PasswordUtils passwordUtils;
+    private final AuthServiceClient authClient;
 
     @Autowired
-    public UserService(UserRepository userRepo, PasswordUtils passwordUtils) {
+    public UserService(UserRepository userRepo, PasswordUtils passwordUtils, AuthServiceClient authClient) {
         this.userRepo = userRepo;
         this.passwordUtils = passwordUtils;
+        this.authClient = authClient;
     }
 
     public List<AppUserDTO> findAll() {
@@ -80,7 +83,11 @@ public class UserService {
             throw new AuthenticationException("Invalid credentials provided!");
         }
 
-        return new Principal(authUser);
+        Principal principal = new Principal(authUser);
+        String token = authClient.generateTokenFromPrincipal(principal);
+        principal.setToken(token);
+
+        return principal;
 
     }
 
