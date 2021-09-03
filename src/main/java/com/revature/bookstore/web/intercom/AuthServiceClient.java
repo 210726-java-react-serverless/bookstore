@@ -13,7 +13,7 @@ import org.springframework.web.client.RestTemplate;
 public class AuthServiceClient {
 
     private final RestTemplate restClient;
-    private final String authServiceUrl = "http://localhost:5001/auth-service/token";
+    private final String authServiceUrl = "http://authservice-env.eba-hmvam7bf.us-east-1.elasticbeanstalk.com/auth-service/token";
 
     @Autowired
     public AuthServiceClient(RestTemplate restClient) {
