@@ -33,6 +33,7 @@ public class UserService {
     }
 
     public List<AppUserDTO> findAll() {
+        System.out.println(userRepo.findAll());
         return userRepo.findAll()
                        .stream()
                        .map(AppUserDTO::new)
