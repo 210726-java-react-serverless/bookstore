@@ -22,3 +22,10 @@ EXPOSE 8080
 
 RUN echo "java -jar -Dspring.profiles.active=${PROFILE} app.jar" >> ./entry.sh
 ENTRYPOINT ["sh", "entry.sh"]
+
+
+#      host: 18.204.247.207
+#      port: 27017
+#      database: bookstore
+#      username: bookstore-app
+#      password: revature
